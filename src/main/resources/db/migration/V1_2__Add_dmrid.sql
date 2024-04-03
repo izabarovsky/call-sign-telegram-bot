@@ -1,0 +1,2 @@
+ALTER TABLE callsign
+    ADD COLUMN dmr_id VARCHAR(10) UNIQUE;

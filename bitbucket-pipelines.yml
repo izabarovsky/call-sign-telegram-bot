@@ -1,0 +1,49 @@
+definitions:
+  steps:
+
+    - step: &create-image
+        name: Create image
+        image: maven:3.6.3-openjdk-17
+        caches:
+          - maven
+          - docker
+        script:
+          - export TESTCONTAINERS_RYUK_DISABLED=true
+          - mvn -B package -DskipTests
+          - docker build -t $BITBUCKET_REPO_SLUG .
+          - docker save --output docker.tar $BITBUCKET_REPO_SLUG
+        artifacts:
+          - docker.tar
+        services:
+          - docker
+
+    - step: &push-image-to-gcr
+        name: Push image
+        image: google/cloud-sdk:alpine
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          # backup docker image
+          - docker load --input docker.tar
+
+          # Authenticating with the service account key file
+          - echo $GCP_API_KEY > ./gcloud-api-key.json
+          - gcloud info --run-diagnostics
+          - gcloud auth activate-service-account --key-file gcloud-api-key.json
+          - gcloud config set project $GCP_PROJECT_ID
+
+          # Login to google docker hub
+          - cat ./gcloud-api-key.json | docker login -u _json_key --password-stdin https://$GCP_REPOSITORY_LOCATION-docker.pkg.dev
+          # Tag docker image with :latest tag and push
+          - docker images
+          - export IMAGE_NAME=$GCP_REPOSITORY_LOCATION-docker.pkg.dev/$GCP_PROJECT_ID/$GCP_REPOSITORY_NAME/$BITBUCKET_REPO_SLUG
+          - docker tag $BITBUCKET_REPO_SLUG $IMAGE_NAME
+          - docker push $IMAGE_NAME
+
+pipelines:
+  branches:
+    main:
+      - step: *create-image
+      - step: *push-image-to-gcr
