@@ -21,15 +21,15 @@ jobs:
         run: mvn -B package -DskipTests
       - name: Build Docker Image
         run: docker build -t my-docker-image .
-      - name: "auth"
-          uses: "google-github-actions/auth@v1"
-          with:
-            credentials_json: "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}"
-      - name: "Set up Cloud SDK"
-        uses: "google-github-actions/setup-gcloud@v1"
-      - name: "Use gcloud CLI"
-        run: "gcloud info"
-      - name: "Docker auth"
+      - name: auth
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+      - name: Use gcloud CLI
+        run: gcloud info
+      - name: Docker auth
         run: |-
           gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
       - name: Push image
