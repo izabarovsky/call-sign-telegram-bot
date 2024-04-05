@@ -12,6 +12,3 @@ jobs:
           distribution: 'oracle'
           cache: maven
       - run: mvn -B package -DskipTests
-        with:
-          name: Package
-          path: staging
