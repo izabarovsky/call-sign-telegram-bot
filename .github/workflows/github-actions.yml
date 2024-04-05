@@ -6,7 +6,7 @@ env:
   GCP_PROJECT_ID: transceivers-collection
   GCP_REPOSITORY: k2callsign-images
   GCP_REGION: europe-central2
-  GCP_LOCATION: ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.GCP_REPOSITORY }}/${{ env.IMAGE_NAME }}
+  GCP_LOCATION: europe-central2-docker.pkg.dev/transceivers-collection/k2callsign-images/call-sign-telegram-bot
 jobs:
   Build-Java-Application:
     runs-on: ubuntu-latest
