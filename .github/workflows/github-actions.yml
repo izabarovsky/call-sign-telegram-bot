@@ -37,6 +37,6 @@ jobs:
       - name: Show images
         run: docker images
       - name: Tag image
-        run: docker tag ${{ IMAGE_NAME }} ${{ env.GCP_LOCATION }}
+        run: docker tag ${{ env.IMAGE_NAME }} ${{ env.GCP_LOCATION }}
       - name: Push image
         run: docker push ${{ env.GCP_LOCATION }}
