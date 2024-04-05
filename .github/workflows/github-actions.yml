@@ -4,7 +4,7 @@ on: [push]
 env:
   PROJECT_ID: transceivers-collection
   REGION: europe-central2
-  GAR_LOCATION: europe-central2-docker.pkg.dev/transceivers-collection/k2callsign-images/
+  GAR_LOCATION: europe-central2-docker.pkg.dev/transceivers-collection/k2callsign-images/call-sign-telegram-bot
 jobs:
   Build-Java-Application:
     runs-on: ubuntu-latest
@@ -20,7 +20,7 @@ jobs:
       - name: Build Java Application
         run: mvn -B package -DskipTests
       - name: Build Docker Image
-        run: docker build -t my-docker-image .
+        run: docker build -t call-sign-telegram-bot .
       - name: auth
         uses: google-github-actions/auth@v1
         with:
