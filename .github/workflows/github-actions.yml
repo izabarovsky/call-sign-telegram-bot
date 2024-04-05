@@ -1,6 +1,10 @@
 name: GitHub Actions Build
 run-name: Build java application then create docker image
 on: [push]
+env:
+  PROJECT_ID: transceivers-collection
+  REGION: europe-central2
+  GAR_LOCATION: europe-central2-docker.pkg.dev/transceivers-collection/k2callsign-images/
 jobs:
   Build-Java-Application:
     runs-on: ubuntu-latest
@@ -17,3 +21,16 @@ jobs:
         run: mvn -B package -DskipTests
       - name: Build Docker Image
         run: docker build -t my-docker-image .
+      - id: "auth"
+          uses: "google-github-actions/auth@v1"
+          with:
+            credentials_json: "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}"
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v1"
+      - name: "Use gcloud CLI"
+        run: "gcloud info"
+      - name: "Docker auth"
+        run: |-
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+      - name: Push image
+        run: docker push ${{ env.GAR_LOCATION }}
