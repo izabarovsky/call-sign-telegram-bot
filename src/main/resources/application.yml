@@ -1,0 +1,20 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+  flyway:
+    clean-on-validation-error: false
+    clean-disabled: false
+bot:
+  name: ${BOT_NAME}
+  token: ${BOT_TOKEN}
+  chat: ${BOT_CHAT}
+  api: https://api.telegram.org/
+  hook: https://call-sign.transceivers.ninja/
+
+radioid-integration-setup-cron: '0 0 18 * * * '
+radioid-integration-cron: '0 0 * * * *'
