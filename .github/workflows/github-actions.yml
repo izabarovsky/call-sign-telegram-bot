@@ -32,5 +32,7 @@ jobs:
       - name: Docker auth
         run: |-
           gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+      - name: Show images
+        run: docker images
       - name: Push image
         run: docker push ${{ env.GAR_LOCATION }}
