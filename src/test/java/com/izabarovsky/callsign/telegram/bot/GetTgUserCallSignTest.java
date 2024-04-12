@@ -53,7 +53,7 @@ public class GetTgUserCallSignTest {
         var threadId = (int) randomId();
         var expected = String.format("""
                 Can't find any info about [%s]
-                Maybe he don't registered in bot or has hidden username...
+                Maybe he hasn't registered in the bot or has hidden username...
                 """, callSign.getUserName());
         var cmd = Command.K2_INFO.value() + "@" + callSign.getUserName();
         var resultFromUserChat = handler.handle(updFromUser(callSign.getTgId(), chatId, cmd))

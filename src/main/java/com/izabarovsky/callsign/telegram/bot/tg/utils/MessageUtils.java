@@ -186,7 +186,7 @@ public class MessageUtils {
     public static HandlerResult msgK2InfoNotFound(Long chatId, Integer threadId, String username) {
         String payload = String.format("""
                 Can't find any info about [%s]
-                Maybe he don't registered in bot or has hidden username...
+                Maybe he hasn't registered in the bot or has hidden username...
                 """, username);
         var msg = SendMessage.builder()
                 .chatId(chatId)
