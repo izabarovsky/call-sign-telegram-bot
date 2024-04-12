@@ -1,6 +1,7 @@
 package com.izabarovsky.callsign.telegram.bot.tg.utils;
 
 import com.izabarovsky.callsign.telegram.bot.service.CallSignModel;
+import com.izabarovsky.callsign.telegram.bot.tg.Command;
 import com.izabarovsky.callsign.telegram.bot.tg.HandlerResult;
 import org.apache.commons.io.IOUtils;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
@@ -187,6 +188,18 @@ public class MessageUtils {
                 Can't find any info about [%s]
                 Maybe he don't registered in bot or has hidden username...
                 """, username);
+        var msg = SendMessage.builder()
+                .chatId(chatId)
+                .messageThreadId(threadId)
+                .parseMode(ParseMode.HTML)
+                .replyMarkup(buildMainMenu())
+                .text(payload)
+                .build();
+        return new HandlerResult(msg);
+    }
+
+    public static HandlerResult msgK2InfoHowTo(Long chatId, Integer threadId) {
+        var payload = String.format("Use this command like %s@username", Command.K2_INFO.value());
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .messageThreadId(threadId)

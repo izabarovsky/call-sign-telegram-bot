@@ -10,8 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.msgK2Info;
-import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.msgK2InfoNotFound;
+import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.*;
 
 public class K2InfoAction implements Handler<Update, HandlerResult> {
     private final CallSignService callSignService;
@@ -25,7 +24,6 @@ public class K2InfoAction implements Handler<Update, HandlerResult> {
     public HandlerResult handle(Update payload) {
         var chatId = payload.getMessage().getChatId();
         var threadId = payload.getMessage().getMessageThreadId();
-        var tgId = payload.getMessage().getFrom().getId();
         var matcher = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE)
                 .matcher(payload.getMessage().getText());
         if (matcher.find()) {
@@ -34,7 +32,7 @@ public class K2InfoAction implements Handler<Update, HandlerResult> {
             return callSignModel.map(signModel -> msgK2Info(chatId, threadId, signModel))
                     .orElseGet(() -> msgK2InfoNotFound(chatId, threadId, username));
         } else {
-            return null;
+            return msgK2InfoHowTo(chatId, threadId);
         }
     }
 
