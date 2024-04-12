@@ -61,6 +61,7 @@ public class DefaultRootHandler implements Handler<Update, HandlerResult>, RootH
 
         var groupChatCommandChain = new ChainHandler(dummyHandler)
                 .setHandler(isK2Info, k2InfoAction)
+                .setHandler(isK2Info, new K2InfoAction(callSignService))
                 .setHandler(isStatistics, k2StatisticsAction);
 
         return BranchHandler.builder()

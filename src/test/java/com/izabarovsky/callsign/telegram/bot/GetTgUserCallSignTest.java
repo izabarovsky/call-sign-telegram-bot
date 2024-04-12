@@ -51,14 +51,20 @@ public class GetTgUserCallSignTest {
     void shouldReturnMessageIfK2InfoNotFound() {
         var callSign = getExistsCallSign(repository);
         var chatId = randomId();
+        var threadId = (int) randomId();
         var expected = String.format("""
                 Can't find any info about [%s]
                 Maybe he don't registered in bot or has hidden username...
                 """, callSign.getUserName());
         var cmd = Command.K2_INFO.value() + "@" + callSign.getUserName();
-        var result = handler.handle(updFromUser(callSign.getTgId(), chatId, cmd))
+        var resultFromUserChat = handler.handle(updFromUser(callSign.getTgId(), chatId, cmd))
                 .getResponseMsg();
-        assertEquals(expected, result.getText());
+        var resultFromGroupChat = handler.handle(updFromGroupChat(callSign.getTgId(), chatId, threadId, cmd))
+                .getResponseMsg();
+        assertAll(
+                () -> assertEquals(expected, resultFromUserChat.getText(), "User chat"),
+                () -> assertEquals(expected, resultFromGroupChat.getText(), "Group chat")
+        );
     }
 
     @Test
@@ -78,7 +84,6 @@ public class GetTgUserCallSignTest {
                 () -> assertEquals(expected, resultNoUserName.getText()),
                 () -> assertEquals(expected, resultNoAtSign.getText())
         );
-
     }
 
 }
