@@ -1,16 +1,20 @@
 package com.izabarovsky.callsign.telegram.bot;
 
 import com.izabarovsky.callsign.telegram.bot.persistence.CallSignRepository;
+import com.izabarovsky.callsign.telegram.bot.persistence.entity.CallSignEntity;
 import com.izabarovsky.callsign.telegram.bot.tg.Command;
 import com.izabarovsky.callsign.telegram.bot.tg.HandlerResult;
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.Handler;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.Objects;
+import java.util.stream.Stream;
 
 import static com.izabarovsky.callsign.telegram.bot.DataHelper.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -29,22 +33,17 @@ public class GetTgUserCallSignTest {
     void shouldReturnK2InfoByUsername() {
         var callSign = getExistsCallSignWithUsername(repository);
         var chatId = randomId();
-        var expected = String.format("""
-                        <b>Username</b>: %s
-                        <b>K2CallSign</b>: %s
-                        <b>OfficialCallSign</b>: %s
-                        <b>QTH</b>: %s
-                        <b>DMR_ID</b>: %s""",
-                Objects.isNull(callSign.getUserName()) ? "hidden" : "@" + callSign.getUserName(),
-                callSign.getK2CallSign(),
-                callSign.getOfficialCallSign(),
-                callSign.getQth(),
-                callSign.getDmrId()
-        );
+        var threadId = (int) randomId();
+        var expected = parseCallSign(callSign);
         var cmd = Command.K2_INFO.value() + "@" + callSign.getUserName();
-        var result = handler.handle(updFromUser(callSign.getTgId(), chatId, cmd))
+        var resultFromUserChat = handler.handle(updFromUser(callSign.getTgId(), chatId, cmd))
                 .getResponseMsg();
-        assertEquals(expected, result.getText());
+        var resultFromGroupChat = handler.handle(updFromGroupChat(callSign.getTgId(), chatId, threadId, cmd))
+                .getResponseMsg();
+        assertAll(
+                () -> assertEquals(expected, resultFromUserChat.getText(), "User chat"),
+                () -> assertEquals(expected, resultFromGroupChat.getText(), "Group chat")
+        );
     }
 
     @Test
@@ -67,22 +66,42 @@ public class GetTgUserCallSignTest {
         );
     }
 
-    @Test
-    void shouldReturnMessageIfCommandNotContainsMention() {
+    @ParameterizedTest
+    @MethodSource("provideInvalidCommand")
+    void shouldReturnMessageIfCommandInvalid(String cmd, String description) {
         var callSign = getExistsCallSign(repository);
         var chatId = randomId();
+        var threadId = (int) randomId();
         var expected = String.format("Use this command like %s@username", Command.K2_INFO.value());
-        var cmdNoUserName = Command.K2_INFO.value() + "@";
-        var cmdNoAtSign = Command.K2_INFO.value();
-
-        var resultNoUserName = handler.handle(updFromUser(callSign.getTgId(), chatId, cmdNoUserName))
+        var resultFromUserChat = handler.handle(updFromUser(callSign.getTgId(), chatId, cmd))
                 .getResponseMsg();
-        var resultNoAtSign = handler.handle(updFromUser(callSign.getTgId(), chatId, cmdNoAtSign))
+        var resultFromGroupChat = handler.handle(updFromGroupChat(callSign.getTgId(), chatId, threadId, cmd))
                 .getResponseMsg();
-
         assertAll(
-                () -> assertEquals(expected, resultNoUserName.getText()),
-                () -> assertEquals(expected, resultNoAtSign.getText())
+                () -> assertEquals(expected, resultFromUserChat.getText(), "User chat"),
+                () -> assertEquals(expected, resultFromGroupChat.getText(), "Group chat")
+        );
+    }
+
+    private static Stream<Arguments> provideInvalidCommand() {
+        return Stream.of(
+                Arguments.of(Command.K2_INFO.value() + "@", "NoUserName"),
+                Arguments.of(Command.K2_INFO.value(), "NoCommandArg")
+        );
+    }
+
+    private String parseCallSign(CallSignEntity callSign) {
+        return String.format("""
+                        <b>Username</b>: %s
+                        <b>K2CallSign</b>: %s
+                        <b>OfficialCallSign</b>: %s
+                        <b>QTH</b>: %s
+                        <b>DMR_ID</b>: %s""",
+                "@" + callSign.getUserName(),
+                callSign.getK2CallSign(),
+                callSign.getOfficialCallSign(),
+                callSign.getQth(),
+                callSign.getDmrId()
         );
     }
 

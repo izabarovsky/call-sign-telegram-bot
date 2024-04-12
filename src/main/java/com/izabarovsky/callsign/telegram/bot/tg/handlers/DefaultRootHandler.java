@@ -46,11 +46,13 @@ public class DefaultRootHandler implements Handler<Update, HandlerResult>, RootH
     }
 
     private Handler<Update, HandlerResult> rootHandler() {
-        Condition<Update> isK2Info = cmdCondition(Command.MY_K2_INFO);
+        Condition<Update> isMyK2Info = cmdCondition(Command.MY_K2_INFO);
+        Condition<Update> isK2Info = cmdCondition(Command.K2_INFO);
         Condition<Update> isStatistics = cmdCondition(Command.STATISTICS);
         Condition<Update> isCommand = new IsCommand();
         Condition<Update> isPersonalChat = new IsPersonalChat();
-        Handler<Update, HandlerResult> k2InfoAction = new MyK2InfoAction(callSignService);
+        Handler<Update, HandlerResult> myK2InfoAction = new MyK2InfoAction(callSignService);
+        Handler<Update, HandlerResult> k2InfoAction = new K2InfoAction(callSignService);
         Handler<Update, HandlerResult> k2StatisticsAction = new K2StatisticsAction(callSignService);
 
         var commandNode = BranchHandler.builder()
@@ -60,8 +62,8 @@ public class DefaultRootHandler implements Handler<Update, HandlerResult>, RootH
                 .build();
 
         var groupChatCommandChain = new ChainHandler(dummyHandler)
+                .setHandler(isMyK2Info, myK2InfoAction)
                 .setHandler(isK2Info, k2InfoAction)
-                .setHandler(isK2Info, new K2InfoAction(callSignService))
                 .setHandler(isStatistics, k2StatisticsAction);
 
         return BranchHandler.builder()
