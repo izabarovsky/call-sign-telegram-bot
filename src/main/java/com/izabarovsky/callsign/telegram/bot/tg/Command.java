@@ -3,6 +3,7 @@ package com.izabarovsky.callsign.telegram.bot.tg;
 public enum Command {
     START("/start"),
     MY_K2_INFO("/MyK2Info"),
+    K2_INFO("/K2Info"),
     GET_ALL("/GetAll"),
     STATISTICS("/Statistics"),
     SEARCH("/Search"),

@@ -68,4 +68,14 @@ public class DataHelper {
         return entity;
     }
 
+    public static CallSignEntity getExistsCallSignWithUsername(CallSignRepository repository) {
+        CallSignEntity entity = new CallSignEntity();
+        entity.setTgId(randomId());
+        entity.setUserName("test_user");
+        entity.setOfficialCallSign(officialCallSign());
+        entity.setK2CallSign(k2CallSign());
+        entity = repository.saveAndFlush(entity);
+        return entity;
+    }
+
 }

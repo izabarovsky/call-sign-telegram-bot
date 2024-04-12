@@ -26,7 +26,7 @@ public class GetTgUserCallSignTest {
 
     @Test
     void shouldReturnK2InfoByUsername() {
-        var callSign = getExistsCallSign(repository);
+        var callSign = getExistsCallSignWithUsername(repository);
         var chatId = randomId();
         var expected = String.format("""
                         <b>Username</b>: %s
@@ -40,7 +40,8 @@ public class GetTgUserCallSignTest {
                 callSign.getQth(),
                 callSign.getDmrId()
         );
-        var result = handler.handle(updFromUser(callSign.getTgId(), chatId, Command.EDIT))
+        var cmd = Command.K2_INFO.value() + "@" + callSign.getUserName();
+        var result = handler.handle(updFromUser(callSign.getTgId(), chatId, cmd))
                 .getResponseMsg();
         assertEquals(expected, result.getText());
     }

@@ -10,11 +10,24 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Objects;
 
 import static com.izabarovsky.callsign.telegram.bot.tg.utils.MenuUtils.*;
 import static java.util.Objects.nonNull;
 
 public class MessageUtils {
+
+    public static HandlerResult msgMyK2Info(Long chatId, Integer threadId, CallSignModel callSignModel) {
+        String payload = parseMyCallSign(callSignModel);
+        var msg = SendMessage.builder()
+                .chatId(chatId)
+                .messageThreadId(threadId)
+                .parseMode(ParseMode.HTML)
+                .replyMarkup(buildMainMenu())
+                .text(payload)
+                .build();
+        return new HandlerResult(msg);
+    }
 
     public static HandlerResult msgK2Info(Long chatId, Integer threadId, CallSignModel callSignModel) {
         String payload = parseCallSign(callSignModel);
@@ -169,14 +182,44 @@ public class MessageUtils {
                 .build();
     }
 
-    private static String parseList(List<CallSignModel> list) {
+    public static HandlerResult msgK2InfoNotFound(Long chatId, Integer threadId, String username) {
+        String payload = String.format("""
+                Can't find any info about [%s]
+                Maybe he don't registered in bot or has hidden username...
+                """, username);
+        var msg = SendMessage.builder()
+                .chatId(chatId)
+                .messageThreadId(threadId)
+                .parseMode(ParseMode.HTML)
+                .replyMarkup(buildMainMenu())
+                .text(payload)
+                .build();
+        return new HandlerResult(msg);
+    }
+
+    public static String parseList(List<CallSignModel> list) {
         StringBuilder text = new StringBuilder(String.format("Found %s members:\n\n", list.size()));
         list.forEach(s -> text.append(parseCallSign(s)).append("\n\n"));
         return text.toString();
     }
 
-    private static String parseCallSign(CallSignModel callSignModel) {
+    public static String parseMyCallSign(CallSignModel callSignModel) {
         return String.format("<b>K2CallSign</b>: %s\n<b>OfficialCallSign</b>: %s\n<b>QTH</b>: %s \n<b>DMR_ID</b>: %s",
+                callSignModel.getK2CallSign(),
+                callSignModel.getOfficialCallSign(),
+                callSignModel.getQth(),
+                callSignModel.getDmrId()
+        );
+    }
+
+    public static String parseCallSign(CallSignModel callSignModel) {
+        return String.format("""
+                        <b>Username</b>: %s
+                        <b>K2CallSign</b>: %s
+                        <b>OfficialCallSign</b>: %s
+                        <b>QTH</b>: %s
+                        <b>DMR_ID</b>: %s""",
+                Objects.isNull(callSignModel.getUserName()) ? "hidden" : "@" + callSignModel.getUserName(),
                 callSignModel.getK2CallSign(),
                 callSignModel.getOfficialCallSign(),
                 callSignModel.getQth(),
