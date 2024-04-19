@@ -34,6 +34,10 @@ public class CallSignService {
         return callSignRepository.findByOfficialCallSign(officialCallSign).map(mapper::callSignEntityToModel);
     }
 
+    public Optional<CallSignModel> findByUsername(String username) {
+        return callSignRepository.findByUserName(username).map(mapper::callSignEntityToModel);
+    }
+
     public List<CallSignModel> findAll() {
         return callSignRepository.findAll()
                 .stream()

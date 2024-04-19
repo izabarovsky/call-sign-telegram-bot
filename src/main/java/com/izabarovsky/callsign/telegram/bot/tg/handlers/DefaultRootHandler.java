@@ -46,10 +46,12 @@ public class DefaultRootHandler implements Handler<Update, HandlerResult>, RootH
     }
 
     private Handler<Update, HandlerResult> rootHandler() {
-        Condition<Update> isK2Info = cmdCondition(Command.MY_K2_INFO);
+        Condition<Update> isMyK2Info = cmdCondition(Command.MY_K2_INFO);
+        Condition<Update> isK2Info = cmdCondition(Command.K2_INFO);
         Condition<Update> isStatistics = cmdCondition(Command.STATISTICS);
         Condition<Update> isCommand = new IsCommand();
         Condition<Update> isPersonalChat = new IsPersonalChat();
+        Handler<Update, HandlerResult> myK2InfoAction = new MyK2InfoAction(callSignService);
         Handler<Update, HandlerResult> k2InfoAction = new K2InfoAction(callSignService);
         Handler<Update, HandlerResult> k2StatisticsAction = new K2StatisticsAction(callSignService);
 
@@ -60,6 +62,7 @@ public class DefaultRootHandler implements Handler<Update, HandlerResult>, RootH
                 .build();
 
         var groupChatCommandChain = new ChainHandler(dummyHandler)
+                .setHandler(isMyK2Info, myK2InfoAction)
                 .setHandler(isK2Info, k2InfoAction)
                 .setHandler(isStatistics, k2StatisticsAction);
 
@@ -124,7 +127,8 @@ public class DefaultRootHandler implements Handler<Update, HandlerResult>, RootH
         Condition<Update> isExistsUser = new IsExistsUser(callSignService);
         Condition<Update> isCreate = cmdCondition(Command.CREATE);
         Condition<Update> isEdit = cmdCondition(Command.EDIT);
-        Condition<Update> isK2Info = cmdCondition(Command.MY_K2_INFO);
+        Condition<Update> isMyK2Info = cmdCondition(Command.MY_K2_INFO);
+        Condition<Update> isK2Info = cmdCondition(Command.K2_INFO);
         Condition<Update> isGetAll = cmdCondition(Command.GET_ALL);
         Condition<Update> isSearch = cmdCondition(Command.SEARCH);
         Condition<Update> isStatistics = cmdCondition(Command.STATISTICS);
@@ -137,6 +141,7 @@ public class DefaultRootHandler implements Handler<Update, HandlerResult>, RootH
 
         var existsUserChain = new ChainHandler(s -> msgOnAnyUnknown(s.getMessage().getChatId()))
                 .setHandler(isEdit, new StartDialogEditAction(dialogService))
+                .setHandler(isMyK2Info, new MyK2InfoAction(callSignService))
                 .setHandler(isK2Info, new K2InfoAction(callSignService))
                 .setHandler(isSearch, new StartDialogSearchAction(dialogService))
                 .setHandler(isGetAll, new GatAllCallSignsAction(callSignService, csvUtil))
