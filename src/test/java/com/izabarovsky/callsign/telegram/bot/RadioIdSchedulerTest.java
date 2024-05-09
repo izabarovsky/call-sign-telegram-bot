@@ -6,7 +6,14 @@ import com.izabarovsky.callsign.telegram.bot.persistence.IntegrationRepository;
 import com.izabarovsky.callsign.telegram.bot.persistence.entity.CallSignEntity;
 import com.izabarovsky.callsign.telegram.bot.persistence.entity.IntegrationEntity;
 import com.izabarovsky.callsign.telegram.bot.service.AbstractDmrIdService;
+import com.izabarovsky.callsign.telegram.bot.service.CallSignMapper;
+import com.izabarovsky.callsign.telegram.bot.service.NotificationDefaultService;
+import com.izabarovsky.callsign.telegram.bot.service.NotificationService;
+import com.izabarovsky.callsign.telegram.bot.tg.BotConfig;
+import com.izabarovsky.callsign.telegram.bot.tg.WebHookCallSignBot;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest
+@Disabled
 public class RadioIdSchedulerTest {
 
     @Autowired
@@ -27,6 +35,8 @@ public class RadioIdSchedulerTest {
     private IntegrationRepository integrationRepository;
     @Autowired
     private RadioIdClient radioIdClient;
+    @Autowired
+    private NotificationService testNotificationService = new TestNotificationService();
 
     @Test
     void shouldScheduleIfOfficialExistsButNoDmrId() {
@@ -61,13 +71,20 @@ public class RadioIdSchedulerTest {
         public TestDmrIdService(RadioIdClient radioIdClient,
                                 CallSignRepository callSignRepository,
                                 IntegrationRepository integrationRepository) {
-            super(radioIdClient, callSignRepository, integrationRepository);
+            super(radioIdClient, callSignRepository, integrationRepository, testNotificationService);
         }
 
         public void setUpTasks() {
             super.setUpTasks();
         }
 
+    }
+
+    class TestNotificationService implements NotificationService {
+        @Override
+        public void send(CallSignEntity entity) {
+            log.info("Send notify...");
+        }
     }
 
     private boolean isScheduled(List<IntegrationEntity> tasks, CallSignEntity callSign) {

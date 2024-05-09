@@ -12,8 +12,10 @@ public class DmrIdService extends AbstractDmrIdService {
 
     public DmrIdService(RadioIdClient radioIdClient,
                         CallSignRepository callSignRepository,
-                        IntegrationRepository integrationRepository) {
-        super(radioIdClient, callSignRepository, integrationRepository);
+                        IntegrationRepository integrationRepository,
+                        NotificationDefaultService notificationService
+    ) {
+        super(radioIdClient, callSignRepository, integrationRepository, notificationService);
     }
 
     @EventListener(ApplicationReadyEvent.class)

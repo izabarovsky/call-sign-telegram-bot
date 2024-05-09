@@ -7,8 +7,6 @@ import com.izabarovsky.callsign.telegram.bot.persistence.CallSignRepository;
 import com.izabarovsky.callsign.telegram.bot.persistence.IntegrationRepository;
 import com.izabarovsky.callsign.telegram.bot.persistence.entity.CallSignEntity;
 import com.izabarovsky.callsign.telegram.bot.persistence.entity.IntegrationEntity;
-import com.izabarovsky.callsign.telegram.bot.tg.BotConfig;
-import com.izabarovsky.callsign.telegram.bot.tg.WebHookCallSignBot;
 import feign.FeignException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +20,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.congratsDmrIdMsg;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -32,9 +29,7 @@ public abstract class AbstractDmrIdService {
     protected final RadioIdClient radioIdClient;
     protected final CallSignRepository callSignRepository;
     protected final IntegrationRepository integrationRepository;
-    protected final WebHookCallSignBot webHookCallSignBot;
-    private final CallSignMapper mapper;
-    private final BotConfig botConfig;
+    protected final NotificationService notificationService;
 
     /**
      * Find callSigns with official callsign, but without dmrId
@@ -86,9 +81,7 @@ public abstract class AbstractDmrIdService {
                     callSign = callSignRepository.save(callSign);
                     integrationRepository.delete(integrationEntity);
                     log.info("{} dmrId saved success!", queryParams.getCallsign());
-                    var k2CallSign = mapper.callSignEntityToModel(callSign);
-                    var congrats = congratsDmrIdMsg(botConfig.getChat(), botConfig.getThread(), k2CallSign);
-                    webHookCallSignBot.sendMessage(congrats);
+                    notificationService.send(callSign);
                 }
             } catch (FeignException e) {
                 log.warn("Exception call radioid ({}): {}", queryParams.getCallsign(), e.getMessage());
