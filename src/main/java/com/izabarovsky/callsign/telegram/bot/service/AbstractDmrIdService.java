@@ -7,6 +7,8 @@ import com.izabarovsky.callsign.telegram.bot.persistence.CallSignRepository;
 import com.izabarovsky.callsign.telegram.bot.persistence.IntegrationRepository;
 import com.izabarovsky.callsign.telegram.bot.persistence.entity.CallSignEntity;
 import com.izabarovsky.callsign.telegram.bot.persistence.entity.IntegrationEntity;
+import com.izabarovsky.callsign.telegram.bot.tg.BotConfig;
+import com.izabarovsky.callsign.telegram.bot.tg.WebHookCallSignBot;
 import feign.FeignException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.congratsDmrIdMsg;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -29,6 +32,9 @@ public abstract class AbstractDmrIdService {
     protected final RadioIdClient radioIdClient;
     protected final CallSignRepository callSignRepository;
     protected final IntegrationRepository integrationRepository;
+    protected final WebHookCallSignBot webHookCallSignBot;
+    private final CallSignMapper mapper;
+    private final BotConfig botConfig;
 
     /**
      * Find callSigns with official callsign, but without dmrId
@@ -65,6 +71,7 @@ public abstract class AbstractDmrIdService {
      * Perform request to radioid api
      * If id found, save it to my db
      * Else, just save to db last apicall timestamp
+     *
      * @return consumer
      */
     protected Consumer<IntegrationEntity> enrichDmrId() {
@@ -76,9 +83,12 @@ public abstract class AbstractDmrIdService {
                 Optional<String> id = extractDmrId(response);
                 if (id.isPresent()) {
                     callSign.setDmrId(id.get());
-                    callSignRepository.save(callSign);
+                    callSign = callSignRepository.save(callSign);
                     integrationRepository.delete(integrationEntity);
                     log.info("{} dmrId saved success!", queryParams.getCallsign());
+                    var k2CallSign = mapper.callSignEntityToModel(callSign);
+                    var congrats = congratsDmrIdMsg(botConfig.getChat(), botConfig.getThread(), k2CallSign);
+                    webHookCallSignBot.sendMessage(congrats);
                 }
             } catch (FeignException e) {
                 log.warn("Exception call radioid ({}): {}", queryParams.getCallsign(), e.getMessage());

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
@@ -46,6 +47,14 @@ public class WebHookCallSignBot extends SpringWebhookBot {
     @Override
     public String getBotUsername() {
         return botConfig.getName();
+    }
+
+    public void sendMessage(SendMessage message) {
+        try {
+            this.sendApiMethod(message);
+        } catch (TelegramApiException e) {
+            log.error("Error while send msg: {}", message.getText());
+        }
     }
 
     private BotApiMethod<?> handleResult(HandlerResult result) {
