@@ -10,3 +10,4 @@ CREATE TABLE IF NOT EXISTS callsign
     qth VARCHAR(100),
     PRIMARY KEY(id)
 );
+
