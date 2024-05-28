@@ -210,6 +210,16 @@ public class MessageUtils {
         return new HandlerResult(msg);
     }
 
+    public static SendMessage congratsDmrIdMsg(String chatId, String threadId, CallSignModel callSign) {
+        var payload = newDmrId(callSign);
+        return SendMessage.builder()
+                .chatId(chatId)
+                .messageThreadId(Integer.valueOf(threadId))
+                .parseMode(ParseMode.HTML)
+                .text(payload)
+                .build();
+    }
+
     public static String parseList(List<CallSignModel> list) {
         StringBuilder text = new StringBuilder(String.format("Found %s members:\n\n", list.size()));
         list.forEach(s -> text.append(parseCallSign(s)).append("\n\n"));
@@ -237,6 +247,17 @@ public class MessageUtils {
                 callSignModel.getOfficialCallSign(),
                 callSignModel.getQth(),
                 callSignModel.getDmrId()
+        );
+    }
+
+    public static String newDmrId(CallSignModel k2CallSign) {
+        return String.format("""
+                        Комм'юніті К2 поздоровляє %s [%s]
+                        з отриманням DMRID [%s]!
+                        Ласкаво просимо в цифру!""",
+                k2CallSign.getK2CallSign(),
+                k2CallSign.getOfficialCallSign(),
+                k2CallSign.getDmrId()
         );
     }
 

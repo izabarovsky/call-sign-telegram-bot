@@ -29,6 +29,7 @@ public abstract class AbstractDmrIdService {
     protected final RadioIdClient radioIdClient;
     protected final CallSignRepository callSignRepository;
     protected final IntegrationRepository integrationRepository;
+    protected final NotificationService notificationService;
 
     /**
      * Find callSigns with official callsign, but without dmrId
@@ -65,6 +66,7 @@ public abstract class AbstractDmrIdService {
      * Perform request to radioid api
      * If id found, save it to my db
      * Else, just save to db last apicall timestamp
+     *
      * @return consumer
      */
     protected Consumer<IntegrationEntity> enrichDmrId() {
@@ -76,9 +78,10 @@ public abstract class AbstractDmrIdService {
                 Optional<String> id = extractDmrId(response);
                 if (id.isPresent()) {
                     callSign.setDmrId(id.get());
-                    callSignRepository.save(callSign);
+                    callSign = callSignRepository.save(callSign);
                     integrationRepository.delete(integrationEntity);
                     log.info("{} dmrId saved success!", queryParams.getCallsign());
+                    notificationService.send(callSign);
                 }
             } catch (FeignException e) {
                 log.warn("Exception call radioid ({}): {}", queryParams.getCallsign(), e.getMessage());
