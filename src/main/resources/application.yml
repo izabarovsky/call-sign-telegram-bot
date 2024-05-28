@@ -15,6 +15,3 @@ bot:
   chat: ${BOT_CHAT}
   api: https://api.telegram.org/
   hook: https://call-sign.transceivers.ninja/
-
-radioid-integration-setup-cron: '0 0 18 * * * '
-radioid-integration-cron: '0 0 * * * *'

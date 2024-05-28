@@ -32,7 +32,7 @@ public abstract class AbstractDmrIdService {
 
     /**
      * Find callSigns with official callsign, but without dmrId
-     * Save all of them to integration repo
+     * Save all of them to integration repository
      */
     protected void setUpTasks() {
         List<Long> scheduled = integrationRepository.findAll().stream()
@@ -60,6 +60,13 @@ public abstract class AbstractDmrIdService {
         tasks.forEach(enrichDmrId());
     }
 
+    /**
+     * Consumer, contains integration logic
+     * Perform request to radioid api
+     * If id found, save it to my db
+     * Else, just save to db last apicall timestamp
+     * @return consumer
+     */
     protected Consumer<IntegrationEntity> enrichDmrId() {
         return integrationEntity -> {
             var callSign = integrationEntity.getCallSignEntity();
@@ -70,6 +77,7 @@ public abstract class AbstractDmrIdService {
                 if (id.isPresent()) {
                     callSign.setDmrId(id.get());
                     callSignRepository.save(callSign);
+                    integrationRepository.delete(integrationEntity);
                     log.info("{} dmrId saved success!", queryParams.getCallsign());
                 }
             } catch (FeignException e) {
@@ -77,7 +85,6 @@ public abstract class AbstractDmrIdService {
                 integrationEntity.setLastCallTimestamp(Timestamp.from(Instant.now()));
                 integrationRepository.save(integrationEntity);
             }
-            integrationRepository.delete(integrationEntity);
         };
     }
 
