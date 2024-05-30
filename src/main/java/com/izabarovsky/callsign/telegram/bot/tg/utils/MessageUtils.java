@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 
 import java.nio.charset.Charset;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
@@ -86,7 +87,7 @@ public class MessageUtils {
     public static HandlerResult msgEnterValueRequired(Long chatId) {
         var msg = SendMessage.builder()
                 .chatId(chatId)
-                .text("Введи свій позивний на К2. Це обов'язково!")
+                .text(getTextK2CallSignRequired())
                 .build();
         return new HandlerResult(msg);
     }
@@ -95,7 +96,7 @@ public class MessageUtils {
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .replyMarkup(buildMainMenu())
-                .text("Використовуй кнопки меню")
+                .text(textUseMenuButtons())
                 .build();
         return new HandlerResult(msg);
     }
@@ -104,7 +105,7 @@ public class MessageUtils {
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .replyMarkup(buildCreateMenu())
-                .text("Привіт! Вітаю в комм'юніті К2! \nКлікай Create щоб почати реєстрацію")
+                .text(textHelloNewcomer())
                 .build();
         return new HandlerResult(msg);
     }
@@ -113,7 +114,7 @@ public class MessageUtils {
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .replyMarkup(buildSkipOrCancelMenu())
-                .text(String.format("Вкажи свій %s. Або пропусти (Skip)", payload))
+                .text(textEnterValueOrSkip(payload))
                 .build();
         return new HandlerResult(msg);
     }
@@ -123,7 +124,7 @@ public class MessageUtils {
                 .chatId(chatId)
                 .messageThreadId(threadId)
                 .replyMarkup(buildCancelMenu())
-                .text("Введи позивний або частину позивного для пошуку")
+                .text(textEnterSearch())
                 .build();
         return new HandlerResult(msg);
     }
@@ -132,16 +133,16 @@ public class MessageUtils {
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .replyMarkup(buildCancelMenu())
-                .text("Цей крок не можна пропустити!")
+                .text(textStepCantSkip())
                 .build();
         return new HandlerResult(msg);
     }
 
-    public static HandlerResult msgCallSingIsBooked(Long chatId, String payload) {
+    public static HandlerResult msgCallSingIsBooked(Long chatId, String callSign) {
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .replyMarkup(buildSkipOrCancelMenu())
-                .text(String.format("Позивний %s вже зайнятий!", payload))
+                .text(getTextCallSingIsBooked(callSign))
                 .build();
         return new HandlerResult(msg);
     }
@@ -150,10 +151,7 @@ public class MessageUtils {
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .replyMarkup(buildSkipOrCancelMenu())
-                .text("""
-                        Позивний невалідний! 
-                        Має відповідати паттерну [2 LETTER][DIGIT][2 or 3 LETTER]
-                        Якщо ще не маєш офіційного позивного, просто тисни Skip""")
+                .text(getTextCallSingIsInvalid())
                 .build();
         return new HandlerResult(msg);
     }
@@ -162,13 +160,13 @@ public class MessageUtils {
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .replyMarkup(buildMainMenu())
-                .text("Діалог завершено")
+                .text(textDialogDone())
                 .build();
         return new HandlerResult(msg);
     }
 
     public static HandlerResult msgSearchResult(Long chatId, Integer threadId, List<CallSignModel> list) {
-        String text = list.isEmpty() ? "Нічого не знайдено" : parseList(list);
+        String text = list.isEmpty() ? textNothingFound() : parseList(list);
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .messageThreadId(threadId)
@@ -192,28 +190,23 @@ public class MessageUtils {
     }
 
     public static HandlerResult msgK2InfoNotFound(Long chatId, Integer threadId, String username) {
-        String payload = String.format("""
-                Учасника [%s] не знайдено
-                Можливо він не реєструвався...
-                """, username);
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .messageThreadId(threadId)
                 .parseMode(ParseMode.HTML)
                 .replyMarkup(buildMainMenu())
-                .text(payload)
+                .text(textUserNotFound(username))
                 .build();
         return new HandlerResult(msg);
     }
 
     public static HandlerResult msgK2InfoHowTo(Long chatId, Integer threadId) {
-        var payload = String.format("Використовуй команду так: %s@username", Command.K2_INFO.value());
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .messageThreadId(threadId)
                 .parseMode(ParseMode.HTML)
                 .replyMarkup(buildMainMenu())
-                .text(payload)
+                .text(textUseK2InfoCommandAsFollow())
                 .build();
         return new HandlerResult(msg);
     }
@@ -244,7 +237,7 @@ public class MessageUtils {
     }
 
     public static String parseCallSign(CallSignModel callSignModel) {
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE.withZone(ZoneId.systemDefault());
         return String.format("""
                         <b>Username</b>: %s
                         <b>K2CallSign</b>: %s
@@ -270,6 +263,59 @@ public class MessageUtils {
                 k2CallSign.getOfficialCallSign(),
                 k2CallSign.getDmrId()
         );
+    }
+
+    public static String getTextCallSingIsInvalid() {
+        return """
+                Позивний невалідний!
+                Має відповідати паттерну [2 LETTER][DIGIT][2 or 3 LETTER]
+                Якщо ще не маєш офіційного позивного, просто тисни Skip""";
+    }
+
+    public static String getTextCallSingIsBooked(String callSign) {
+        return String.format("Позивний %s вже зайнятий!", callSign);
+    }
+
+    public static String getTextK2CallSignRequired() {
+        return "Придумай свій позивний для репітера К2. Це обов'язково!";
+    }
+
+    public static String textUseMenuButtons() {
+        return "Використовуй кнопки меню";
+    }
+    public static String textHelloNewcomer() {
+        return "Привіт! Вітаю в комм'юніті К2! \nКлікай Create щоб почати реєстрацію";
+    }
+
+    public static String textEnterValueOrSkip(String payload) {
+        return String.format("Вкажи свій %s. Або пропусти (Skip)", payload);
+    }
+
+    public static String textDialogDone() {
+        return "Діалог завершено";
+    }
+
+    public static String textEnterSearch() {
+        return "Введи позивний або частину позивного, спробую знайти цього учасника";
+    }
+
+    public static String textNothingFound() {
+        return "Нічого не знайдено";
+    }
+
+    public static String textStepCantSkip() {
+        return "Цей крок не можна пропустити!";
+    }
+
+    public static String textUseK2InfoCommandAsFollow() {
+        return String.format("Використовуй команду так: %s@username", Command.K2_INFO.value());
+    }
+
+    public static String textUserNotFound(String username) {
+        return  String.format("""
+                Учасника [%s] не знайдено
+                Можливо він не реєструвався...
+                """, username);
     }
 
 }

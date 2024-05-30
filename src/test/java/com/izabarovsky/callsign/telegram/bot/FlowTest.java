@@ -18,6 +18,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.stream.Stream;
 
 import static com.izabarovsky.callsign.telegram.bot.DataHelper.*;
+import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
@@ -37,19 +38,19 @@ public class FlowTest {
         var chatId = randomId();
 
         var result = handler.handle(updFromUser(tgId, chatId, Command.CREATE)).getResponseMsg();
-        assertEquals("Enter your K2CallSign. You can't skip it!", result.getText());
+        assertEquals(getTextK2CallSignRequired(), result.getText());
         assertEquals(String.valueOf(chatId), result.getChatId(), "Response to chatId");
 
         result = handler.handle(updFromUser(tgId, chatId, k2CallSign())).getResponseMsg();
-        assertEquals("Enter your OfficialCallSign. Or skip", result.getText());
+        assertEquals(textEnterValueOrSkip("OfficialCallSign"), result.getText());
         assertEquals(String.valueOf(chatId), result.getChatId(), "Response to chatId");
 
         result = handler.handle(updFromUser(tgId, chatId, officialCallSign())).getResponseMsg();
-        assertEquals("Enter your QTH. Or skip", result.getText());
+        assertEquals(textEnterValueOrSkip("QTH"), result.getText());
         assertEquals(String.valueOf(chatId), result.getChatId(), "Response to chatId");
 
         result = handler.handle(updFromUser(tgId, chatId, "kyiv")).getResponseMsg();
-        assertEquals("Dialog done", result.getText());
+        assertEquals(textDialogDone(), result.getText());
         assertEquals(String.valueOf(chatId), result.getChatId(), "Response to chatId");
     }
 
@@ -59,11 +60,11 @@ public class FlowTest {
         var chatId = randomId();
 
         var result = handler.handle(updFromUser(tgId, chatId, Command.CREATE)).getResponseMsg();
-        assertEquals("Enter your K2CallSign. You can't skip it!", result.getText());
+        assertEquals(getTextK2CallSignRequired(), result.getText());
         assertEquals(String.valueOf(chatId), result.getChatId(), "Response to chatId");
 
         result = handler.handle(updFromUser(tgId, chatId, Command.SKIP)).getResponseMsg();
-        assertEquals("You can't skip this step!", result.getText());
+        assertEquals(textStepCantSkip(), result.getText());
         assertEquals(String.valueOf(chatId), result.getChatId(), "Response to chatId");
     }
 
@@ -73,19 +74,19 @@ public class FlowTest {
         var chatId = randomId();
 
         var result = handler.handle(updFromUser(tgId, chatId, Command.EDIT)).getResponseMsg();
-        assertEquals("Enter your K2CallSign. Or skip", result.getText());
+        assertEquals(textEnterValueOrSkip("K2CallSign"), result.getText());
         assertEquals(String.valueOf(chatId), result.getChatId(), "Response to chatId");
 
         result = handler.handle(updFromUser(tgId, chatId, k2CallSign())).getResponseMsg();
-        assertEquals("Enter your OfficialCallSign. Or skip", result.getText());
+        assertEquals(textEnterValueOrSkip("OfficialCallSign"), result.getText());
         assertEquals(String.valueOf(chatId), result.getChatId(), "Response to chatId");
 
         result = handler.handle(updFromUser(tgId, chatId, officialCallSign())).getResponseMsg();
-        assertEquals("Enter your QTH. Or skip", result.getText());
+        assertEquals(textEnterValueOrSkip("QTH"), result.getText());
         assertEquals(String.valueOf(chatId), result.getChatId(), "Response to chatId");
 
         result = handler.handle(updFromUser(tgId, chatId, "kyiv")).getResponseMsg();
-        assertEquals("Dialog done", result.getText());
+        assertEquals(textDialogDone(), result.getText());
         assertEquals(String.valueOf(chatId), result.getChatId(), "Response to chatId");
     }
 
@@ -93,8 +94,9 @@ public class FlowTest {
     void newcomerCantSearch() {
         var tgId = randomId();
         var chatId = randomId();
-        var expected = "Hi! Wellcome to K2 community!\nClick Create to start dialog";
-        var result = handler.handle(updFromUser(tgId, chatId, Command.SEARCH)).getResponseMsg();
+        var expected = textHelloNewcomer();
+        var update = updFromUser(tgId, chatId, Command.SEARCH);
+        var result = handler.handle(update).getResponseMsg();
         assertEquals(expected, result.getText());
         assertEquals(String.valueOf(chatId), result.getChatId(), "Response to chatId");
     }
@@ -106,12 +108,13 @@ public class FlowTest {
         var chatId = randomId();
 
         var result = handler.handle(updFromUser(tgId, chatId, Command.SEARCH)).getResponseMsg();
-        assertEquals("Enter your search word or cancel", result.getText());
+        assertEquals(textEnterSearch(), result.getText());
         assertEquals(String.valueOf(chatId), result.getChatId(), "Response to chatId");
 
         result = handler.handle(updFromUser(tgId, chatId, exists.getK2CallSign().substring(0, 3)))
                 .getResponseMsg();
-        assertTrue(result.getText().startsWith("Found 1 members"));
+        var expectedFound = "Знайдено 1 учасників";
+        assertTrue(result.getText().startsWith(expectedFound));
         assertEquals(String.valueOf(chatId), result.getChatId(), "Response to chatId");
 
         assertEquals(DialogState.EXPECT_SEARCH, dialogStateService.getState(tgId),
@@ -119,15 +122,15 @@ public class FlowTest {
 
         result = handler.handle(updFromUser(tgId, chatId, exists.getOfficialCallSign()))
                 .getResponseMsg();
-        assertTrue(result.getText().startsWith("Found 1 members"));
+        assertTrue(result.getText().startsWith(expectedFound));
         assertEquals(String.valueOf(chatId), result.getChatId(), "Response to chatId");
 
         result = handler.handle(updFromUser(tgId, chatId, "ssssss")).getResponseMsg();
-        assertEquals("Nothing found", result.getText());
+        assertEquals(textNothingFound(), result.getText());
         assertEquals(String.valueOf(chatId), result.getChatId(), "Response to chatId");
 
         result = handler.handle(updFromUser(tgId, chatId, Command.CANCEL)).getResponseMsg();
-        assertEquals("Please, use menu buttons to interact", result.getText());
+        assertEquals(textUseMenuButtons(), result.getText());
         assertEquals(String.valueOf(chatId), result.getChatId(), "Response to chatId");
 
         assertNull(dialogStateService.getState(tgId), "State cleaned after Cancel command");

@@ -1,7 +1,7 @@
 package com.izabarovsky.callsign.telegram.bot;
 
 import com.izabarovsky.callsign.telegram.bot.persistence.CallSignRepository;
-import com.izabarovsky.callsign.telegram.bot.persistence.entity.CallSignEntity;
+import com.izabarovsky.callsign.telegram.bot.service.CallSignMapper;
 import com.izabarovsky.callsign.telegram.bot.tg.Command;
 import com.izabarovsky.callsign.telegram.bot.tg.HandlerResult;
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.Handler;
@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -17,6 +18,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.stream.Stream;
 
 import static com.izabarovsky.callsign.telegram.bot.DataHelper.*;
+import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -34,7 +36,8 @@ public class GetTgUserCallSignTest {
         var callSign = getExistsCallSignWithUsername(repository);
         var chatId = randomId();
         var threadId = (int) randomId();
-        var expected = parseCallSign(callSign);
+        CallSignMapper mapper = Mappers.getMapper(CallSignMapper.class);
+        var expected = parseCallSign(mapper.callSignEntityToModel(callSign));
         var cmd = Command.K2_INFO.value() + "@" + callSign.getUserName();
         var resultFromUserChat = handler.handle(updFromUser(callSign.getTgId(), chatId, cmd))
                 .getResponseMsg();
@@ -51,10 +54,7 @@ public class GetTgUserCallSignTest {
         var callSign = getExistsCallSign(repository);
         var chatId = randomId();
         var threadId = (int) randomId();
-        var expected = String.format("""
-                Can't find any info about [%s]
-                Maybe he hasn't registered in the bot or has hidden username...
-                """, callSign.getUserName());
+        var expected = textUserNotFound(callSign.getUserName());
         var cmd = Command.K2_INFO.value() + "@" + callSign.getUserName();
         var resultFromUserChat = handler.handle(updFromUser(callSign.getTgId(), chatId, cmd))
                 .getResponseMsg();
@@ -72,7 +72,7 @@ public class GetTgUserCallSignTest {
         var callSign = getExistsCallSign(repository);
         var chatId = randomId();
         var threadId = (int) randomId();
-        var expected = String.format("Use this command like %s@username", Command.K2_INFO.value());
+        var expected = textUseK2InfoCommandAsFollow();
         var resultFromUserChat = handler.handle(updFromUser(callSign.getTgId(), chatId, cmd))
                 .getResponseMsg();
         var resultFromGroupChat = handler.handle(updFromGroupChat(callSign.getTgId(), chatId, threadId, cmd))
@@ -87,21 +87,6 @@ public class GetTgUserCallSignTest {
         return Stream.of(
                 Arguments.of(Command.K2_INFO.value() + "@", "NoUserName"),
                 Arguments.of(Command.K2_INFO.value(), "NoCommandArg")
-        );
-    }
-
-    private String parseCallSign(CallSignEntity callSign) {
-        return String.format("""
-                        <b>Username</b>: %s
-                        <b>K2CallSign</b>: %s
-                        <b>OfficialCallSign</b>: %s
-                        <b>QTH</b>: %s
-                        <b>DMR_ID</b>: %s""",
-                "@" + callSign.getUserName(),
-                callSign.getK2CallSign(),
-                callSign.getOfficialCallSign(),
-                callSign.getQth(),
-                callSign.getDmrId()
         );
     }
 
