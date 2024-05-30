@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 
 import java.nio.charset.Charset;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
@@ -48,10 +49,10 @@ public class MessageUtils {
         long dmr = list.stream().filter(s -> nonNull(s.getDmrId())).count();
         long nonOfficial = total - official;
         String payload = String.format("""
-                        <b>Registered members</b>: %s
-                        <b>With official callsign</b>: %s
-                        <b>Without official</b>: %s
-                        <b>With DMR_ID</b>: %s
+                        <b>Зареєстровано через бот</b>: %s
+                        <b>Мають офіційний позивний</b>: %s
+                        <b>Не мають офіційного</b>: %s
+                        <b>Мають DMR_ID</b>: %s
                         """,
                 total,
                 official,
@@ -69,19 +70,23 @@ public class MessageUtils {
     }
 
     public static HandlerResult msgNewcomer(Long chatId, Integer threadId, String userName) {
+        var text = String.format("""
+                Вітаю, %s! Схоже ти ще не зареєстроаний. Давай зареєструємо твій позивний К2!
+                Клікай сюди @K2CallSignBot
+                """, Objects.nonNull(userName) ? userName : "[чел з прихованим username:)]");
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .messageThreadId(threadId)
                 .replyMarkup(buildCreateMenu())
-                .text(String.format("Hi, %s! Looks like you newcomer. Let's create your K2CallSign!", userName))
+                .text(text)
                 .build();
         return new HandlerResult(msg);
     }
 
-    public static HandlerResult msgEnterValueRequired(Long chatId, String payload) {
+    public static HandlerResult msgEnterValueRequired(Long chatId) {
         var msg = SendMessage.builder()
                 .chatId(chatId)
-                .text(String.format("Enter your %s. You can't skip it!", payload))
+                .text("Введи свій позивний на К2. Це обов'язково!")
                 .build();
         return new HandlerResult(msg);
     }
@@ -90,7 +95,7 @@ public class MessageUtils {
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .replyMarkup(buildMainMenu())
-                .text("Please, use menu buttons to interact")
+                .text("Використовуй кнопки меню")
                 .build();
         return new HandlerResult(msg);
     }
@@ -99,7 +104,7 @@ public class MessageUtils {
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .replyMarkup(buildCreateMenu())
-                .text("Hi! Wellcome to K2 community!\nClick Create to start dialog")
+                .text("Привіт! Вітаю в комм'юніті К2! \nКлікай Create щоб почати реєстрацію")
                 .build();
         return new HandlerResult(msg);
     }
@@ -108,7 +113,7 @@ public class MessageUtils {
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .replyMarkup(buildSkipOrCancelMenu())
-                .text(String.format("Enter your %s. Or skip", payload))
+                .text(String.format("Вкажи свій %s. Або пропусти (Skip)", payload))
                 .build();
         return new HandlerResult(msg);
     }
@@ -118,7 +123,7 @@ public class MessageUtils {
                 .chatId(chatId)
                 .messageThreadId(threadId)
                 .replyMarkup(buildCancelMenu())
-                .text("Enter your search word or cancel")
+                .text("Введи позивний або частину позивного для пошуку")
                 .build();
         return new HandlerResult(msg);
     }
@@ -127,7 +132,7 @@ public class MessageUtils {
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .replyMarkup(buildCancelMenu())
-                .text("You can't skip this step!")
+                .text("Цей крок не можна пропустити!")
                 .build();
         return new HandlerResult(msg);
     }
@@ -136,7 +141,7 @@ public class MessageUtils {
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .replyMarkup(buildSkipOrCancelMenu())
-                .text(String.format("CallSign %s is booked! Please, take another one!", payload))
+                .text(String.format("Позивний %s вже зайнятий!", payload))
                 .build();
         return new HandlerResult(msg);
     }
@@ -145,7 +150,10 @@ public class MessageUtils {
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .replyMarkup(buildSkipOrCancelMenu())
-                .text("CallSign invalid! Must match pattern [2 LETTER][DIGIT][2 or 3 LETTER]. Example: UT3UUU")
+                .text("""
+                        Позивний невалідний! 
+                        Має відповідати паттерну [2 LETTER][DIGIT][2 or 3 LETTER]
+                        Якщо ще не маєш офіційного позивного, просто тисни Skip""")
                 .build();
         return new HandlerResult(msg);
     }
@@ -154,13 +162,13 @@ public class MessageUtils {
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .replyMarkup(buildMainMenu())
-                .text("Dialog done")
+                .text("Діалог завершено")
                 .build();
         return new HandlerResult(msg);
     }
 
     public static HandlerResult msgSearchResult(Long chatId, Integer threadId, List<CallSignModel> list) {
-        String text = list.isEmpty() ? "Nothing found" : parseList(list);
+        String text = list.isEmpty() ? "Нічого не знайдено" : parseList(list);
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .messageThreadId(threadId)
@@ -185,8 +193,8 @@ public class MessageUtils {
 
     public static HandlerResult msgK2InfoNotFound(Long chatId, Integer threadId, String username) {
         String payload = String.format("""
-                Can't find any info about [%s]
-                Maybe he hasn't registered in the bot or has hidden username...
+                Учасника [%s] не знайдено
+                Можливо він не реєструвався...
                 """, username);
         var msg = SendMessage.builder()
                 .chatId(chatId)
@@ -199,7 +207,7 @@ public class MessageUtils {
     }
 
     public static HandlerResult msgK2InfoHowTo(Long chatId, Integer threadId) {
-        var payload = String.format("Use this command like %s@username", Command.K2_INFO.value());
+        var payload = String.format("Використовуй команду так: %s@username", Command.K2_INFO.value());
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .messageThreadId(threadId)
@@ -221,7 +229,7 @@ public class MessageUtils {
     }
 
     public static String parseList(List<CallSignModel> list) {
-        StringBuilder text = new StringBuilder(String.format("Found %s members:\n\n", list.size()));
+        StringBuilder text = new StringBuilder(String.format("Знайдено %s учасників:\n\n", list.size()));
         list.forEach(s -> text.append(parseCallSign(s)).append("\n\n"));
         return text.toString();
     }
@@ -236,17 +244,20 @@ public class MessageUtils {
     }
 
     public static String parseCallSign(CallSignModel callSignModel) {
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
         return String.format("""
                         <b>Username</b>: %s
                         <b>K2CallSign</b>: %s
                         <b>OfficialCallSign</b>: %s
                         <b>QTH</b>: %s
-                        <b>DMR_ID</b>: %s""",
+                        <b>DMR_ID</b>: %s
+                        <b>Registered</b>: %s""",
                 Objects.isNull(callSignModel.getUserName()) ? "hidden" : "@" + callSignModel.getUserName(),
                 callSignModel.getK2CallSign(),
                 callSignModel.getOfficialCallSign(),
                 callSignModel.getQth(),
-                callSignModel.getDmrId()
+                callSignModel.getDmrId(),
+                formatter.format(callSignModel.getCreationTimestamp())
         );
     }
 
