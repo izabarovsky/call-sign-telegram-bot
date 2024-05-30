@@ -71,15 +71,11 @@ public class MessageUtils {
     }
 
     public static HandlerResult msgNewcomer(Long chatId, Integer threadId, String userName) {
-        var text = String.format("""
-                Вітаю, %s! Схоже ти ще не зареєстроаний. Давай зареєструємо твій позивний К2!
-                Клікай сюди @K2CallSignBot
-                """, Objects.nonNull(userName) ? userName : "[чел з прихованим username:)]");
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .messageThreadId(threadId)
                 .replyMarkup(buildCreateMenu())
-                .text(text)
+                .text(textHelloNewcomer(userName))
                 .build();
         return new HandlerResult(msg);
     }
@@ -97,15 +93,6 @@ public class MessageUtils {
                 .chatId(chatId)
                 .replyMarkup(buildMainMenu())
                 .text(textUseMenuButtons())
-                .build();
-        return new HandlerResult(msg);
-    }
-
-    public static HandlerResult msgOnNewcomer(Long chatId) {
-        var msg = SendMessage.builder()
-                .chatId(chatId)
-                .replyMarkup(buildCreateMenu())
-                .text(textHelloNewcomer())
                 .build();
         return new HandlerResult(msg);
     }
@@ -283,8 +270,12 @@ public class MessageUtils {
     public static String textUseMenuButtons() {
         return "Використовуй кнопки меню";
     }
-    public static String textHelloNewcomer() {
-        return "Привіт! Вітаю в комм'юніті К2! \nКлікай Create щоб почати реєстрацію";
+
+    public static String textHelloNewcomer(String userName) {
+        return String.format("""
+                Вітаю, %s! Схоже ти ще не зареєстроаний. Давай зареєструємо твій позивний К2!
+                Клікай сюди @K2CallSignBot
+                """, Objects.nonNull(userName) ? userName : "[чел з прихованим username:)]");
     }
 
     public static String textEnterValueOrSkip(String payload) {
@@ -312,7 +303,7 @@ public class MessageUtils {
     }
 
     public static String textUserNotFound(String username) {
-        return  String.format("""
+        return String.format("""
                 Учасника [%s] не знайдено
                 Можливо він не реєструвався...
                 """, username);

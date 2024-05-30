@@ -94,8 +94,10 @@ public class FlowTest {
     void newcomerCantSearch() {
         var tgId = randomId();
         var chatId = randomId();
-        var expected = textHelloNewcomer();
+        var userName = "test";
+        var expected = textHelloNewcomer(userName);
         var update = updFromUser(tgId, chatId, Command.SEARCH);
+        update.getMessage().getFrom().setUserName(userName);
         var result = handler.handle(update).getResponseMsg();
         assertEquals(expected, result.getText());
         assertEquals(String.valueOf(chatId), result.getChatId(), "Response to chatId");
