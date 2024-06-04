@@ -215,7 +215,11 @@ public class MessageUtils {
     }
 
     public static String parseMyCallSign(CallSignModel callSignModel) {
-        return String.format("<b>K2CallSign</b>: %s\n<b>OfficialCallSign</b>: %s\n<b>QTH</b>: %s \n<b>DMR_ID</b>: %s",
+        return String.format("""
+                        <b>K2CallSign</b>: %s
+                        <b>OfficialCallSign</b>: %s
+                        <b>QTH</b>: %s
+                        <b>DMR_ID</b>: %s""",
                 callSignModel.getK2CallSign(),
                 callSignModel.getOfficialCallSign(),
                 callSignModel.getQth(),
@@ -243,9 +247,11 @@ public class MessageUtils {
 
     public static String newDmrId(CallSignModel k2CallSign) {
         return String.format("""
+                        @%s
                         Комм'юніті К2 поздоровляє %s [%s]
                         з отриманням DMRID [%s]!
                         Ласкаво просимо в цифру!""",
+                Objects.isNull(k2CallSign.getUserName()) ? "hidden" : "@" + k2CallSign.getUserName(),
                 k2CallSign.getK2CallSign(),
                 k2CallSign.getOfficialCallSign(),
                 k2CallSign.getDmrId()
@@ -273,7 +279,7 @@ public class MessageUtils {
 
     public static String textHelloNewcomer(String userName) {
         return String.format("""
-                Вітаю, %s! Схоже ти ще не зареєстроаний. Давай зареєструємо твій позивний К2!
+                Вітаю, @%s! Схоже ти ще не зареєстроаний. Давай зареєструємо твій позивний К2!
                 Клікай сюди @K2CallSignBot
                 """, Objects.nonNull(userName) ? userName : "[чел з прихованим username:)]");
     }
