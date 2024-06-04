@@ -136,7 +136,10 @@ public class DefaultRootHandler implements Handler<Update, HandlerResult>, RootH
         var newcomerUser = BranchHandler.builder()
                 .condition(isCreate)
                 .branchTrue(new StartDialogCreateAction(dialogService))
-                .branchFalse(s -> msgOnNewcomer(s.getMessage().getChatId()))
+                .branchFalse(s -> msgNewcomer(
+                        s.getMessage().getChatId(),
+                        s.getMessage().getMessageThreadId(),
+                        s.getMessage().getFrom().getUserName()))
                 .build();
 
         var existsUserChain = new ChainHandler(s -> msgOnAnyUnknown(s.getMessage().getChatId()))

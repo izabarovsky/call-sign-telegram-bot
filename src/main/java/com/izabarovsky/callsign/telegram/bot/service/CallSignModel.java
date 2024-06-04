@@ -3,6 +3,9 @@ package com.izabarovsky.callsign.telegram.bot.service;
 import lombok.Builder;
 import lombok.Data;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+
 @Data
 @Builder
 public class CallSignModel {
@@ -14,4 +17,5 @@ public class CallSignModel {
     private String officialCallSign;
     private String qth;
     private String dmrId;
+    private Instant creationTimestamp;
 }

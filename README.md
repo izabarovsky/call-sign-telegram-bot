@@ -24,7 +24,9 @@ BotApiMethod<?> leaveChat = LeaveChat.builder()
 ### RadioId integration
  Example request
 
-`` ``
+```
+curl https://radioid.net/api/dmr/user/?callsign=UT3UUG
+```
 
 ### Run postgres on localhost
 

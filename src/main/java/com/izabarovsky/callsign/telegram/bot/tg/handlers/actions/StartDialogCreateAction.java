@@ -20,7 +20,7 @@ public class StartDialogCreateAction implements Handler<Update, HandlerResult> {
         var id = payload.getMessage().getFrom().getId();
         var chatId = payload.getMessage().getChatId();
         dialogService.putState(id, DialogState.EXPECT_UNOFFICIAL);
-        return msgEnterValueRequired(chatId, "K2CallSign");
+        return msgEnterValueRequired(chatId);
     }
 
 }
