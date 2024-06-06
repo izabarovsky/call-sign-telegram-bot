@@ -5,7 +5,7 @@ import com.izabarovsky.callsign.telegram.bot.tg.BotConfig;
 import com.izabarovsky.callsign.telegram.bot.tg.WebHookCallSignBot;
 import org.springframework.stereotype.Component;
 
-import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.congratsDmrIdMsg;
+import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.msgCongratsDmrIdMsg;
 
 @Component
 public class NotificationDefaultService implements NotificationService {
@@ -21,7 +21,7 @@ public class NotificationDefaultService implements NotificationService {
 
     public void send(CallSignEntity entity) {
         var k2CallSign = mapper.callSignEntityToModel(entity);
-        var congrats = congratsDmrIdMsg(botConfig.getChat(), botConfig.getThread(), k2CallSign);
+        var congrats = msgCongratsDmrIdMsg(botConfig.getChat(), botConfig.getThread(), k2CallSign);
         webHookCallSignBot.sendMessage(congrats);
     }
 

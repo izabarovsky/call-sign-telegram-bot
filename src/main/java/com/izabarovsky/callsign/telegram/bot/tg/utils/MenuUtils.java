@@ -4,19 +4,15 @@ import com.izabarovsky.callsign.telegram.bot.tg.Command;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MenuUtils {
 
     public static ReplyKeyboardMarkup buildSkipOrCancelMenu() {
-        List<KeyboardRow> keyboardRows = new ArrayList<>();
-        KeyboardRow skip = new KeyboardRow();
-        skip.add(Command.SKIP.value());
-        keyboardRows.add(skip);
-        KeyboardRow cancel = new KeyboardRow();
-        cancel.add(Command.CANCEL.value());
-        keyboardRows.add(cancel);
+        List<KeyboardRow> keyboardRows = keyboardRows(Command.SKIP, Command.CANCEL);
         return ReplyKeyboardMarkup.builder()
                 .keyboard(keyboardRows)
                 .selective(true)
@@ -26,12 +22,8 @@ public class MenuUtils {
     }
 
     public static ReplyKeyboardMarkup buildCancelMenu() {
-        List<KeyboardRow> keyboardRows = new ArrayList<>();
-        KeyboardRow cancel = new KeyboardRow();
-        cancel.add(Command.CANCEL.value());
-        keyboardRows.add(cancel);
         return ReplyKeyboardMarkup.builder()
-                .keyboard(keyboardRows)
+                .keyboard(keyboardRows(Command.CANCEL))
                 .selective(true)
                 .resizeKeyboard(true)
                 .oneTimeKeyboard(false)
@@ -39,28 +31,14 @@ public class MenuUtils {
     }
 
     public static ReplyKeyboardMarkup buildMainMenu() {
-        List<KeyboardRow> keyboardRows = new ArrayList<>();
-
-        KeyboardRow myK2Info = new KeyboardRow();
-        myK2Info.add(Command.MY_K2_INFO.value());
-        keyboardRows.add(myK2Info);
-
-        KeyboardRow statistics = new KeyboardRow();
-        statistics.add(Command.STATISTICS.value());
-        keyboardRows.add(statistics);
-
-        KeyboardRow search = new KeyboardRow();
-        search.add(Command.SEARCH.value());
-        keyboardRows.add(search);
-
-        KeyboardRow edit = new KeyboardRow();
-        edit.add(Command.EDIT.value());
-        keyboardRows.add(edit);
-
-        KeyboardRow getAll = new KeyboardRow();
-        getAll.add(Command.GET_ALL.value());
-        keyboardRows.add(getAll);
-
+        List<KeyboardRow> keyboardRows = keyboardRows(
+                Command.MY_K2_INFO,
+                Command.STATISTICS,
+                Command.SEARCH,
+                Command.EDIT,
+                Command.GET_ALL,
+                Command.FREQUENCY_NOTES
+        );
         return ReplyKeyboardMarkup.builder()
                 .keyboard(keyboardRows)
                 .selective(true)
@@ -70,16 +48,21 @@ public class MenuUtils {
     }
 
     public static ReplyKeyboardMarkup buildCreateMenu() {
-        List<KeyboardRow> keyboardRows = new ArrayList<>();
-        KeyboardRow create = new KeyboardRow();
-        create.add(Command.CREATE.value());
-        keyboardRows.add(create);
         return ReplyKeyboardMarkup.builder()
-                .keyboard(keyboardRows)
+                .keyboard(keyboardRows(Command.CREATE))
                 .selective(true)
                 .resizeKeyboard(true)
                 .oneTimeKeyboard(false)
                 .build();
+    }
+
+    private static List<KeyboardRow> keyboardRows(Command... commands) {
+        Function<Command, KeyboardRow> mapper = s -> {
+            KeyboardRow row = new KeyboardRow();
+            row.add(s.value());
+            return row;
+        };
+        return Stream.of(commands).map(mapper).collect(Collectors.toList());
     }
 
 }

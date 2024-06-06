@@ -49,11 +49,13 @@ public class DefaultRootHandler implements Handler<Update, HandlerResult>, RootH
         Condition<Update> isMyK2Info = cmdCondition(Command.MY_K2_INFO);
         Condition<Update> isK2Info = cmdCondition(Command.K2_INFO);
         Condition<Update> isStatistics = cmdCondition(Command.STATISTICS);
+        Condition<Update> isFrequencyNotes = cmdCondition(Command.FREQUENCY_NOTES);
         Condition<Update> isCommand = new IsCommand();
         Condition<Update> isPersonalChat = new IsPersonalChat();
         Handler<Update, HandlerResult> myK2InfoAction = new MyK2InfoAction(callSignService);
         Handler<Update, HandlerResult> k2InfoAction = new K2InfoAction(callSignService);
         Handler<Update, HandlerResult> k2StatisticsAction = new K2StatisticsAction(callSignService);
+        Handler<Update, HandlerResult> frequencyNotesAction = new FrequencyNotesAction();
 
         var commandNode = BranchHandler.builder()
                 .condition(isCommand)
@@ -64,7 +66,8 @@ public class DefaultRootHandler implements Handler<Update, HandlerResult>, RootH
         var groupChatCommandChain = new ChainHandler(dummyHandler)
                 .setHandler(isMyK2Info, myK2InfoAction)
                 .setHandler(isK2Info, k2InfoAction)
-                .setHandler(isStatistics, k2StatisticsAction);
+                .setHandler(isStatistics, k2StatisticsAction)
+                .setHandler(isFrequencyNotes, frequencyNotesAction);
 
         return BranchHandler.builder()
                 .condition(isPersonalChat)
@@ -132,6 +135,7 @@ public class DefaultRootHandler implements Handler<Update, HandlerResult>, RootH
         Condition<Update> isGetAll = cmdCondition(Command.GET_ALL);
         Condition<Update> isSearch = cmdCondition(Command.SEARCH);
         Condition<Update> isStatistics = cmdCondition(Command.STATISTICS);
+        Condition<Update> isFrequencyNotes = cmdCondition(Command.FREQUENCY_NOTES);
 
         var newcomerUser = BranchHandler.builder()
                 .condition(isCreate)
@@ -148,7 +152,8 @@ public class DefaultRootHandler implements Handler<Update, HandlerResult>, RootH
                 .setHandler(isK2Info, new K2InfoAction(callSignService))
                 .setHandler(isSearch, new StartDialogSearchAction(dialogService))
                 .setHandler(isGetAll, new GatAllCallSignsAction(callSignService, csvUtil))
-                .setHandler(isStatistics, new K2StatisticsAction(callSignService));
+                .setHandler(isStatistics, new K2StatisticsAction(callSignService))
+                .setHandler(isFrequencyNotes, new FrequencyNotesAction());
 
         return BranchHandler.builder()
                 .condition(isExistsUser)
