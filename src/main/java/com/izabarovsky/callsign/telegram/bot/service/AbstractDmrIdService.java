@@ -45,7 +45,7 @@ public abstract class AbstractDmrIdService {
                 .map(mapCallSignToTask())
                 .toList();
         integrationRepository.saveAll(tasks);
-        log.info("Scheduled {} tasks", tasks.size());
+        log.info("Scheduled {} integration tasks", tasks.size());
     }
 
     public void executeTasks() {

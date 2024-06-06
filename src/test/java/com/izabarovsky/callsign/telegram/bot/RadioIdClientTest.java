@@ -14,6 +14,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -29,6 +33,7 @@ public class RadioIdClientTest {
     @Test
     void dmrIdPresent() {
         var result = radioIdClient.getDmrId(new QueryParams("UT3UUG"));
+        log.info("Result: {}", result.getResults());
         assertEquals(1, result.getCount());
     }
 
@@ -36,6 +41,16 @@ public class RadioIdClientTest {
     void dmrIdNotPresent() {
         Executable call = () -> radioIdClient.getDmrId(new QueryParams("UT2XX"));
         assertThrows(FeignException.class, call);
+    }
+
+    @Test
+    void multipleRequest() {
+        List<String> callsigns = new ArrayList<>();
+        callsigns.add("UT3UUG");
+        callsigns.add("UT3UUY");
+        var result = radioIdClient.getDmrId(new QueryParams(callsigns));
+        log.info("Result: {}", result.getResults());
+        assertEquals(2, result.getCount());
     }
 
 }

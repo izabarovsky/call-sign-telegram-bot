@@ -9,12 +9,10 @@ spring:
   flyway:
     clean-on-validation-error: false
     clean-disabled: false
-  # Not work...
-  feign:
-    client:
-      config:
-        default:
-          loggerLevel: FULL
+
+logging:
+  level:
+    com.izabarovsky.callsign.telegram.bot.dmrid.RadioIdClient: DEBUG
 
 bot:
   name: test_bot:${BOT_NAME}
