@@ -119,9 +119,10 @@ public class TextUtils {
                 ColorCode-1
                 TalkGroup - 25501 (Kyiv)
                                 
-                <b>Brovary Perrot</b>
+                <b>Brovary Parrot</b>
                 RX 436.700 / TX 436.700
                 CTSS: 71.9Hz
+                QTH - Бровари
                 """;
     }
 }
