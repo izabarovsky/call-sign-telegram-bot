@@ -5,6 +5,7 @@ import com.izabarovsky.callsign.telegram.bot.service.CallSignMapper;
 import com.izabarovsky.callsign.telegram.bot.tg.Command;
 import com.izabarovsky.callsign.telegram.bot.tg.HandlerResult;
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.Handler;
+import com.izabarovsky.callsign.telegram.bot.tg.utils.TextUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -54,7 +55,7 @@ public class GetTgUserCallSignTest {
         var callSign = getExistsCallSign(repository);
         var chatId = randomId();
         var threadId = (int) randomId();
-        var expected = textUserNotFound(callSign.getUserName());
+        var expected = TextUtils.textUserNotFound(callSign.getUserName());
         var cmd = Command.K2_INFO.value() + "@" + callSign.getUserName();
         var resultFromUserChat = handler.handle(updFromUser(callSign.getTgId(), chatId, cmd))
                 .getResponseMsg();
@@ -72,7 +73,7 @@ public class GetTgUserCallSignTest {
         var callSign = getExistsCallSign(repository);
         var chatId = randomId();
         var threadId = (int) randomId();
-        var expected = textUseK2InfoCommandAsFollow();
+        var expected = TextUtils.textUseK2InfoCommandAsFollow();
         var resultFromUserChat = handler.handle(updFromUser(callSign.getTgId(), chatId, cmd))
                 .getResponseMsg();
         var resultFromGroupChat = handler.handle(updFromGroupChat(callSign.getTgId(), chatId, threadId, cmd))

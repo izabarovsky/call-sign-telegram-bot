@@ -1,7 +1,6 @@
 package com.izabarovsky.callsign.telegram.bot.tg.utils;
 
 import com.izabarovsky.callsign.telegram.bot.service.CallSignModel;
-import com.izabarovsky.callsign.telegram.bot.tg.Command;
 import com.izabarovsky.callsign.telegram.bot.tg.HandlerResult;
 import org.apache.commons.io.IOUtils;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
@@ -16,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.izabarovsky.callsign.telegram.bot.tg.utils.MenuUtils.*;
+import static com.izabarovsky.callsign.telegram.bot.tg.utils.TextUtils.textStatistics;
 import static java.util.Objects.nonNull;
 
 public class MessageUtils {
@@ -49,23 +49,12 @@ public class MessageUtils {
         long official = list.stream().filter(s -> nonNull(s.getOfficialCallSign())).count();
         long dmr = list.stream().filter(s -> nonNull(s.getDmrId())).count();
         long nonOfficial = total - official;
-        String payload = String.format("""
-                        <b>Зареєстровано через бот</b>: %s
-                        <b>Мають офіційний позивний</b>: %s
-                        <b>Не мають офіційного</b>: %s
-                        <b>Мають DMR_ID</b>: %s
-                        """,
-                total,
-                official,
-                nonOfficial,
-                dmr
-        );
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .messageThreadId(threadId)
                 .parseMode(ParseMode.HTML)
                 .replyMarkup(buildMainMenu())
-                .text(payload)
+                .text(textStatistics(total, official, dmr, nonOfficial))
                 .build();
         return new HandlerResult(msg);
     }
@@ -75,7 +64,7 @@ public class MessageUtils {
                 .chatId(chatId)
                 .messageThreadId(threadId)
                 .replyMarkup(buildCreateMenu())
-                .text(textHelloNewcomer(userName))
+                .text(TextUtils.textHelloNewcomer(userName))
                 .build();
         return new HandlerResult(msg);
     }
@@ -83,7 +72,7 @@ public class MessageUtils {
     public static HandlerResult msgEnterValueRequired(Long chatId) {
         var msg = SendMessage.builder()
                 .chatId(chatId)
-                .text(getTextK2CallSignRequired())
+                .text(TextUtils.textK2CallSignRequired())
                 .build();
         return new HandlerResult(msg);
     }
@@ -92,7 +81,7 @@ public class MessageUtils {
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .replyMarkup(buildMainMenu())
-                .text(textUseMenuButtons())
+                .text(TextUtils.textUseMenuButtons())
                 .build();
         return new HandlerResult(msg);
     }
@@ -101,7 +90,7 @@ public class MessageUtils {
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .replyMarkup(buildSkipOrCancelMenu())
-                .text(textEnterValueOrSkip(payload))
+                .text(TextUtils.textEnterValueOrSkip(payload))
                 .build();
         return new HandlerResult(msg);
     }
@@ -111,7 +100,7 @@ public class MessageUtils {
                 .chatId(chatId)
                 .messageThreadId(threadId)
                 .replyMarkup(buildCancelMenu())
-                .text(textEnterSearch())
+                .text(TextUtils.textEnterSearch())
                 .build();
         return new HandlerResult(msg);
     }
@@ -120,7 +109,7 @@ public class MessageUtils {
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .replyMarkup(buildCancelMenu())
-                .text(textStepCantSkip())
+                .text(TextUtils.textStepCantSkip())
                 .build();
         return new HandlerResult(msg);
     }
@@ -129,7 +118,7 @@ public class MessageUtils {
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .replyMarkup(buildSkipOrCancelMenu())
-                .text(getTextCallSingIsBooked(callSign))
+                .text(TextUtils.textCallSingIsBooked(callSign))
                 .build();
         return new HandlerResult(msg);
     }
@@ -138,7 +127,7 @@ public class MessageUtils {
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .replyMarkup(buildSkipOrCancelMenu())
-                .text(getTextCallSingIsInvalid())
+                .text(TextUtils.textCallSingIsInvalid())
                 .build();
         return new HandlerResult(msg);
     }
@@ -147,13 +136,13 @@ public class MessageUtils {
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .replyMarkup(buildMainMenu())
-                .text(textDialogDone())
+                .text(TextUtils.textDialogDone())
                 .build();
         return new HandlerResult(msg);
     }
 
     public static HandlerResult msgSearchResult(Long chatId, Integer threadId, List<CallSignModel> list) {
-        String text = list.isEmpty() ? textNothingFound() : parseList(list);
+        String text = list.isEmpty() ? TextUtils.textNothingFound() : parseList(list);
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .messageThreadId(threadId)
@@ -182,7 +171,7 @@ public class MessageUtils {
                 .messageThreadId(threadId)
                 .parseMode(ParseMode.HTML)
                 .replyMarkup(buildMainMenu())
-                .text(textUserNotFound(username))
+                .text(TextUtils.textUserNotFound(username))
                 .build();
         return new HandlerResult(msg);
     }
@@ -193,13 +182,13 @@ public class MessageUtils {
                 .messageThreadId(threadId)
                 .parseMode(ParseMode.HTML)
                 .replyMarkup(buildMainMenu())
-                .text(textUseK2InfoCommandAsFollow())
+                .text(TextUtils.textUseK2InfoCommandAsFollow())
                 .build();
         return new HandlerResult(msg);
     }
 
-    public static SendMessage congratsDmrIdMsg(String chatId, String threadId, CallSignModel callSign) {
-        var payload = newDmrId(callSign);
+    public static SendMessage msgCongratsDmrIdMsg(String chatId, String threadId, CallSignModel callSign) {
+        var payload = TextUtils.textOnNewDmrId(callSign);
         return SendMessage.builder()
                 .chatId(chatId)
                 .messageThreadId(Integer.valueOf(threadId))
@@ -214,7 +203,7 @@ public class MessageUtils {
                 .messageThreadId(threadId)
                 .parseMode(ParseMode.HTML)
                 .replyMarkup(buildMainMenu())
-                .text(textFrequencyNotes())
+                .text(TextUtils.textFrequencyNotes())
                 .build();
         return new HandlerResult(msg);
     }
@@ -254,111 +243,6 @@ public class MessageUtils {
                 callSignModel.getDmrId(),
                 formatter.format(callSignModel.getCreationTimestamp())
         );
-    }
-
-    public static String newDmrId(CallSignModel k2CallSign) {
-        return String.format("""
-                        @%s
-                        Комм'юніті К2 поздоровляє %s [%s]
-                        з отриманням DMRID [%s]!
-                        Ласкаво просимо в цифру!""",
-                Objects.isNull(k2CallSign.getUserName()) ? "hidden" : "@" + k2CallSign.getUserName(),
-                k2CallSign.getK2CallSign(),
-                k2CallSign.getOfficialCallSign(),
-                k2CallSign.getDmrId()
-        );
-    }
-
-    public static String getTextCallSingIsInvalid() {
-        return """
-                Позивний невалідний!
-                Має відповідати паттерну [2 LETTER][DIGIT][2 or 3 LETTER]
-                Якщо ще не маєш офіційного позивного, просто тисни Skip""";
-    }
-
-    public static String getTextCallSingIsBooked(String callSign) {
-        return String.format("Позивний %s вже зайнятий!", callSign);
-    }
-
-    public static String getTextK2CallSignRequired() {
-        return "Придумай свій позивний для репітера К2. Це обов'язково!";
-    }
-
-    public static String textUseMenuButtons() {
-        return "Використовуй кнопки меню";
-    }
-
-    public static String textHelloNewcomer(String userName) {
-        return String.format("""
-                Вітаю, @%s! Схоже ти ще не зареєстроаний. Давай зареєструємо твій позивний К2!
-                Клікай сюди @K2CallSignBot
-                """, Objects.nonNull(userName) ? userName : "[чел з прихованим username:)]");
-    }
-
-    public static String textEnterValueOrSkip(String payload) {
-        return String.format("Вкажи свій %s. Або пропусти (Skip)", payload);
-    }
-
-    public static String textDialogDone() {
-        return "Діалог завершено";
-    }
-
-    public static String textEnterSearch() {
-        return "Введи позивний або частину позивного, спробую знайти цього учасника";
-    }
-
-    public static String textNothingFound() {
-        return "Нічого не знайдено";
-    }
-
-    public static String textStepCantSkip() {
-        return "Цей крок не можна пропустити!";
-    }
-
-    public static String textUseK2InfoCommandAsFollow() {
-        return String.format("Використовуй команду так: %s@username", Command.K2_INFO.value());
-    }
-
-    public static String textUserNotFound(String username) {
-        return String.format("""
-                Учасника [%s] не знайдено
-                Можливо він не реєструвався...
-                """, username);
-    }
-
-    public static String textFrequencyNotes() {
-        return """
-                <b>Kyiv-2</b>
-                RX 446.150 / TX 434.950 (offset -11.2)
-                CTCSS: 74.4Hz
-                QTH - Батиєва гора
-                435.375 - канал для прямих зв'язків
-                <b>Kyiv-1</b>
-                RX 446.225 / TX 434.850 (offset: -11.375)
-                CTCSS: 88.5Hz
-                QTH - ТРЦ Апрель
-                                
-                <b>Тільки з офіційним позивним!</b>
-                                
-                <b>R81</b>
-                RX 438.925 / TX 431.325 (offset -7.6)
-                CTCSS: 88.5Hz
-                QTH - Кловський узвіз
-                                
-                <b>R3</b>
-                RX 145.675 / TX1 45.075 (offset: -0.6)
-                CTCSS: 88.5Hz
-                
-                <b>R-100 (DMR)</b>
-                RX 439.400 / TX 431.800
-                Slot - 1
-                ColorCode-1
-                TalkGroup - 25501 (Kyiv)
-                
-                <b>Brovary Perrot</b>
-                RX 436.700 / TX 436.700
-                CTSS: 71.9Hz
-                """;
     }
 
 }

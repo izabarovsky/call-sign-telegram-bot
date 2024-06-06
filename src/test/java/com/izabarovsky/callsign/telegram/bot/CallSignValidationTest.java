@@ -12,8 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static com.izabarovsky.callsign.telegram.bot.DataHelper.*;
-import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.getTextCallSingIsBooked;
-import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.getTextCallSingIsInvalid;
+import static com.izabarovsky.callsign.telegram.bot.tg.utils.TextUtils.textCallSingIsBooked;
+import static com.izabarovsky.callsign.telegram.bot.tg.utils.TextUtils.textCallSingIsInvalid;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
@@ -32,7 +32,7 @@ public class CallSignValidationTest {
         var tgId = randomId();
         dialogStateService.putState(tgId, DialogState.EXPECT_UNOFFICIAL);
         var msg = handler.handle(updFromUser(tgId, chatId, exists)).getResponseMsg();
-        assertEquals(getTextCallSingIsBooked(exists), msg.getText());
+        assertEquals(textCallSingIsBooked(exists), msg.getText());
         assertEquals(String.valueOf(chatId), msg.getChatId(), "Response to chatId");
     }
 
@@ -43,7 +43,7 @@ public class CallSignValidationTest {
         var tgId = randomId();
         dialogStateService.putState(tgId, DialogState.EXPECT_OFFICIAL);
         var msg = handler.handle(updFromUser(tgId, chatId, exists)).getResponseMsg();
-        assertEquals(getTextCallSingIsBooked(exists), msg.getText());
+        assertEquals(textCallSingIsBooked(exists), msg.getText());
         assertEquals(String.valueOf(chatId), msg.getChatId(), "Response to chatId");
     }
 
@@ -54,7 +54,7 @@ public class CallSignValidationTest {
         dialogStateService.putState(tgId, DialogState.EXPECT_OFFICIAL);
         var msg = handler.handle(updFromUser(tgId, chatId, RandomStringUtils.randomAlphabetic(5)))
                 .getResponseMsg();
-        assertEquals(getTextCallSingIsInvalid(), msg.getText());
+        assertEquals(textCallSingIsInvalid(), msg.getText());
         assertEquals(String.valueOf(chatId), msg.getChatId(), "Response to chatId");
     }
 
