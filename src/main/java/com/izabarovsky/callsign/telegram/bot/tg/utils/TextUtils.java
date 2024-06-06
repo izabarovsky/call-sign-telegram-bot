@@ -97,32 +97,42 @@ public class TextUtils {
                 CTCSS: 74.4Hz
                 QTH - Батиєва гора
                 435.375 - канал для прямих зв'язків
+                
                 <b>Kyiv-1</b>
                 RX 446.225 / TX 434.850 (offset: -11.375)
                 CTCSS: 88.5Hz
                 QTH - ТРЦ Апрель
                                 
                 <b>Тільки з офіційним позивним!</b>
-                                
+                
+                <b>R3</b>
+                RX 145.675 / TX1 45.075 (offset: -0.6)
+                CTCSS: 88.5Hz
+                
+                <b>R76</b>
+                RX 438.800 / TX 431.200 (offset -7.6)
+                CTCSS: 88.5Hz
+                QTH - Бровари
+                
                 <b>R81</b>
                 RX 438.925 / TX 431.325 (offset -7.6)
                 CTCSS: 88.5Hz
                 QTH - Кловський узвіз
-                                
-                <b>R3</b>
-                RX 145.675 / TX1 45.075 (offset: -0.6)
-                CTCSS: 88.5Hz
-                                
-                <b>R-100 (DMR)</b>
+
+                <b>R100 (DMR)</b>
                 RX 439.400 / TX 431.800
                 Slot - 1
                 ColorCode-1
                 TalkGroup - 25501 (Kyiv)
                                 
                 <b>Brovary Parrot</b>
-                RX 436.700 / TX 436.700
+                RX/TX 436.700
                 CTSS: 71.9Hz
                 QTH - Бровари
+                
+                <b>Echolink</b>
+                RX/TX 433.375
+                CTSS: 123.0Hz
                 """;
     }
 }
