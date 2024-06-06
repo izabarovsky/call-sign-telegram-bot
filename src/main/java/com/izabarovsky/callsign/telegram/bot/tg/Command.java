@@ -10,6 +10,7 @@ public enum Command {
     EDIT("/Edit"),
     CREATE("/Create"),
     CANCEL("/Cancel"),
+    FREQUENCY_NOTES("/FrequencyNotes"),
     SKIP("/Skip");
 
     private final String value;

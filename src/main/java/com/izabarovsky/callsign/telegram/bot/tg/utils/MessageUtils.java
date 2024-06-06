@@ -208,6 +208,17 @@ public class MessageUtils {
                 .build();
     }
 
+    public static HandlerResult msgFrequencyNotes(Long chatId, Integer threadId) {
+        var msg = SendMessage.builder()
+                .chatId(chatId)
+                .messageThreadId(threadId)
+                .parseMode(ParseMode.HTML)
+                .replyMarkup(buildMainMenu())
+                .text(textFrequencyNotes())
+                .build();
+        return new HandlerResult(msg);
+    }
+
     public static String parseList(List<CallSignModel> list) {
         StringBuilder text = new StringBuilder(String.format("Знайдено %s учасників:\n\n", list.size()));
         list.forEach(s -> text.append(parseCallSign(s)).append("\n\n"));
@@ -313,6 +324,41 @@ public class MessageUtils {
                 Учасника [%s] не знайдено
                 Можливо він не реєструвався...
                 """, username);
+    }
+
+    public static String textFrequencyNotes() {
+        return """
+                <b>Kyiv-2</b>
+                RX 446.150 / TX 434.950 (offset -11.2)
+                CTCSS: 74.4Hz
+                QTH - Батиєва гора
+                435.375 - канал для прямих зв'язків
+                <b>Kyiv-1</b>
+                RX 446.225 / TX 434.850 (offset: -11.375)
+                CTCSS: 88.5Hz
+                QTH - ТРЦ Апрель
+                                
+                <b>Тільки з офіційним позивним!</b>
+                                
+                <b>R81</b>
+                RX 438.925 / TX 431.325 (offset -7.6)
+                CTCSS: 88.5Hz
+                QTH - Кловський узвіз
+                                
+                <b>R3</b>
+                RX 145.675 / TX1 45.075 (offset: -0.6)
+                CTCSS: 88.5Hz
+                
+                <b>R-100 (DMR)</b>
+                RX 439.400 / TX 431.800
+                Slot - 1
+                ColorCode-1
+                TalkGroup - 25501 (Kyiv)
+                
+                <b>Brovary Perrot</b>
+                RX 436.700 / TX 436.700
+                CTSS: 71.9Hz
+                """;
     }
 
 }

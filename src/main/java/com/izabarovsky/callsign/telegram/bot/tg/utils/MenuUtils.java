@@ -61,6 +61,10 @@ public class MenuUtils {
         getAll.add(Command.GET_ALL.value());
         keyboardRows.add(getAll);
 
+        KeyboardRow frequencyNotes = new KeyboardRow();
+        getAll.add(Command.FREQUENCY_NOTES.value());
+        keyboardRows.add(frequencyNotes);
+
         return ReplyKeyboardMarkup.builder()
                 .keyboard(keyboardRows)
                 .selective(true)
