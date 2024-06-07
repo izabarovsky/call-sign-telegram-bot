@@ -1,5 +1,6 @@
 package com.izabarovsky.callsign.telegram.bot.service;
 
+import com.izabarovsky.callsign.telegram.bot.dmrid.DmrIdModel;
 import com.izabarovsky.callsign.telegram.bot.dmrid.QueryParams;
 import com.izabarovsky.callsign.telegram.bot.dmrid.RadioIdClient;
 import com.izabarovsky.callsign.telegram.bot.dmrid.ResultModel;
@@ -58,7 +59,8 @@ public abstract class AbstractDmrIdService {
                 .filter(required)
                 .toList();
         log.info("Called executeTasks: {} tasks found", tasks.size());
-        tasks.forEach(enrichDmrId());
+        // tasks.forEach(enrichDmrId());
+        enrichDmrIds(tasks);
     }
 
     /**
@@ -89,6 +91,42 @@ public abstract class AbstractDmrIdService {
                 integrationRepository.save(integrationEntity);
             }
         };
+    }
+
+    protected void enrichDmrIds(List<IntegrationEntity> tasks) {
+        List<String> callsigns = tasks.stream()
+                .map(s -> s.getCallSignEntity().getOfficialCallSign())
+                .toList();
+        var queryParams = new QueryParams(callsigns);
+
+        try {
+            var response = radioIdClient.getDmrId(queryParams);
+            tasks.forEach(
+                    s -> {
+                        var currentCallSign = s.getCallSignEntity().getOfficialCallSign();
+                        Consumer<DmrIdModel> processDmrId = dmrIdModel -> {
+                            s.getCallSignEntity().setDmrId(dmrIdModel.getId());
+                            var callSign = callSignRepository.save(s.getCallSignEntity());
+                            integrationRepository.delete(s);
+                            notificationService.send(callSign);
+                        };
+                        Runnable updateIntegrationTimestamp = () -> {
+                            s.setLastCallTimestamp(Timestamp.from(Instant.now()));
+                            integrationRepository.save(s);
+                        };
+                        findDmrId(response, currentCallSign).ifPresentOrElse(processDmrId, updateIntegrationTimestamp);
+                    }
+            );
+        } catch (FeignException e) {
+            log.warn("Exception call radioid ({}): {}", queryParams.getCallsign(), e.getMessage());
+        }
+    }
+
+    private Optional<DmrIdModel> findDmrId(ResultModel resultModel, String callSign) {
+        if (resultModel.getCount() == 0) return Optional.empty();
+        return resultModel.getResults().stream()
+                .filter(t -> t.getCallsign().equals(callSign))
+                .findFirst();
     }
 
     protected Function<CallSignEntity, IntegrationEntity> mapCallSignToTask() {

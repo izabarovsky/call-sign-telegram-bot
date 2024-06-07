@@ -13,7 +13,7 @@ public class DmrIdService extends AbstractDmrIdService {
     public DmrIdService(RadioIdClient radioIdClient,
                         CallSignRepository callSignRepository,
                         IntegrationRepository integrationRepository,
-                        NotificationDefaultService notificationService
+                        NotificationService notificationService
     ) {
         super(radioIdClient, callSignRepository, integrationRepository, notificationService);
     }
