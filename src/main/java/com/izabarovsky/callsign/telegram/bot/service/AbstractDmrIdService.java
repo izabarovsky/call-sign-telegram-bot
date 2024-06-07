@@ -59,62 +59,29 @@ public abstract class AbstractDmrIdService {
                 .filter(required)
                 .toList();
         log.info("Called executeTasks: {} tasks found", tasks.size());
-        // tasks.forEach(enrichDmrId());
         enrichDmrIds(tasks);
     }
 
     /**
      * Consumer, contains integration logic
      * Perform request to radioid api
-     * If id found, save it to my db
+     * If id found, save it to db
      * Else, just save to db last apicall timestamp
      *
      * @return consumer
      */
-    protected Consumer<IntegrationEntity> enrichDmrId() {
-        return integrationEntity -> {
-            var callSign = integrationEntity.getCallSignEntity();
-            var queryParams = new QueryParams(callSign.getOfficialCallSign());
-            try {
-                var response = radioIdClient.getDmrId(queryParams);
-                Optional<String> id = extractDmrId(response);
-                if (id.isPresent()) {
-                    callSign.setDmrId(id.get());
-                    callSign = callSignRepository.save(callSign);
-                    integrationRepository.delete(integrationEntity);
-                    log.info("{} dmrId saved success!", queryParams.getCallsign());
-                    notificationService.send(callSign);
-                }
-            } catch (FeignException e) {
-                log.warn("Exception call radioid ({}): {}", queryParams.getCallsign(), e.getMessage());
-                integrationEntity.setLastCallTimestamp(Timestamp.from(Instant.now()));
-                integrationRepository.save(integrationEntity);
-            }
-        };
-    }
-
     protected void enrichDmrIds(List<IntegrationEntity> tasks) {
         List<String> callsigns = tasks.stream()
                 .map(s -> s.getCallSignEntity().getOfficialCallSign())
                 .toList();
         var queryParams = new QueryParams(callsigns);
-
         try {
             var response = radioIdClient.getDmrId(queryParams);
-            tasks.forEach(
-                    s -> {
+
+            tasks.forEach(s -> {
                         var currentCallSign = s.getCallSignEntity().getOfficialCallSign();
-                        Consumer<DmrIdModel> processDmrId = dmrIdModel -> {
-                            s.getCallSignEntity().setDmrId(dmrIdModel.getId());
-                            var callSign = callSignRepository.save(s.getCallSignEntity());
-                            integrationRepository.delete(s);
-                            notificationService.send(callSign);
-                        };
-                        Runnable updateIntegrationTimestamp = () -> {
-                            s.setLastCallTimestamp(Timestamp.from(Instant.now()));
-                            integrationRepository.save(s);
-                        };
-                        findDmrId(response, currentCallSign).ifPresentOrElse(processDmrId, updateIntegrationTimestamp);
+                        findDmrId(response, currentCallSign)
+                                .ifPresentOrElse(handleReceivedDmrId(s), updateIntegrationTimestamp(s));
                     }
             );
         } catch (FeignException e) {
@@ -122,11 +89,42 @@ public abstract class AbstractDmrIdService {
         }
     }
 
+    /**
+     * Try to find callSign in api results
+     *
+     * @param resultModel
+     * @param callSign
+     * @return
+     */
     private Optional<DmrIdModel> findDmrId(ResultModel resultModel, String callSign) {
         if (resultModel.getCount() == 0) return Optional.empty();
         return resultModel.getResults().stream()
                 .filter(t -> t.getCallsign().equals(callSign))
                 .findFirst();
+    }
+
+    /**
+     * 1. Update callSign with dmrId
+     * 2. Remove integration task
+     * 3. Send notification
+     *
+     * @param integrationEntity
+     * @return
+     */
+    private Consumer<DmrIdModel> handleReceivedDmrId(IntegrationEntity integrationEntity) {
+        return dmrIdModel -> {
+            integrationEntity.getCallSignEntity().setDmrId(dmrIdModel.getId());
+            var callSign = callSignRepository.save(integrationEntity.getCallSignEntity());
+            integrationRepository.delete(integrationEntity);
+            notificationService.send(callSign);
+        };
+    }
+
+    private Runnable updateIntegrationTimestamp(IntegrationEntity integrationEntity) {
+        return () -> {
+            integrationEntity.setLastCallTimestamp(Timestamp.from(Instant.now()));
+            integrationRepository.save(integrationEntity);
+        };
     }
 
     protected Function<CallSignEntity, IntegrationEntity> mapCallSignToTask() {
@@ -137,11 +135,4 @@ public abstract class AbstractDmrIdService {
         };
     }
 
-    protected Optional<String> extractDmrId(ResultModel resultModel) {
-        if (resultModel.getCount() == 1) {
-            return Optional.of(resultModel.getResults().get(0).getId());
-        }
-        log.warn("Can't handle response: {}", resultModel);
-        return Optional.empty();
-    }
 }
