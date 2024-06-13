@@ -8,7 +8,7 @@ import java.util.Objects;
 public class TextUtils {
     public static String textOnNewDmrId(CallSignModel k2CallSign) {
         return String.format("""
-                        @%s
+                        %s
                         Комм'юніті К2 поздоровляє %s [%s]
                         з отриманням DMRID [%s]!
                         Ласкаво просимо в цифру!""",

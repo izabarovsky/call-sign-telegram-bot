@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component;
 import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.msgCongratsDmrIdMsg;
 
 @Component
-public class NotificationDefaultService implements NotificationService {
+public class NotificationDmrIdService implements NotificationService {
     private final WebHookCallSignBot webHookCallSignBot;
     private final CallSignMapper mapper;
     private final BotConfig botConfig;
 
-    public NotificationDefaultService(WebHookCallSignBot webHookCallSignBot, CallSignMapper mapper, BotConfig botConfig) {
+    public NotificationDmrIdService(WebHookCallSignBot webHookCallSignBot, CallSignMapper mapper, BotConfig botConfig) {
         this.webHookCallSignBot = webHookCallSignBot;
         this.mapper = mapper;
         this.botConfig = botConfig;

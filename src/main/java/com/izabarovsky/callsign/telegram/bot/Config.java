@@ -1,6 +1,7 @@
 package com.izabarovsky.callsign.telegram.bot;
 
 import com.izabarovsky.callsign.telegram.bot.tg.BotConfig;
+import feign.Logger;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,11 @@ public class Config {
     @Bean
     public SetWebhook setWebhookInstance() {
         return SetWebhook.builder().url(botConfig.getHook()).build();
+    }
+
+    @Bean
+    public Logger.Level loggerLevel() {
+        return Logger.Level.FULL;
     }
 
 }

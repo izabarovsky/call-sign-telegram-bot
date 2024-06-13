@@ -81,7 +81,6 @@ public class WebHookCallSignBot extends SpringWebhookBot {
         try {
             ChatMember chatMember = this.sendApiMethod(getChatMember);
             String status = chatMember.getStatus();
-            log.info("User {} member status: {}", userId, status);
             return status.equals("administrator") || status.equals("member") || status.equals("creator");
         } catch (TelegramApiException e) {
             log.error(e.getMessage());

@@ -54,7 +54,7 @@ public class MessageUtils {
                 .messageThreadId(threadId)
                 .parseMode(ParseMode.HTML)
                 .replyMarkup(buildMainMenu())
-                .text(textStatistics(total, official, dmr, nonOfficial))
+                .text(textStatistics(total, official, nonOfficial, dmr))
                 .build();
         return new HandlerResult(msg);
     }
