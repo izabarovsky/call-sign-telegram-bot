@@ -45,7 +45,7 @@ public class CallbackUpdate implements UpdateWrapper {
 
     @Override
     public Boolean isPrivate() {
-        throw new NotImplementedException();
+        return update.getCallbackQuery().getMessage().isUserMessage();
     }
 
     @Override
