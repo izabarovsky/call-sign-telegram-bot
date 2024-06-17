@@ -5,6 +5,7 @@ import com.izabarovsky.callsign.telegram.bot.service.CallSignMapper;
 import com.izabarovsky.callsign.telegram.bot.tg.Command;
 import com.izabarovsky.callsign.telegram.bot.tg.HandlerResult;
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.Handler;
+import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 import com.izabarovsky.callsign.telegram.bot.tg.utils.TextUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class GetTgUserCallSignTest {
 
     @Autowired
-    private Handler<Update, HandlerResult> handler;
+    private Handler<UpdateWrapper, HandlerResult> handler;
     @Autowired
     private CallSignRepository repository;
 

@@ -24,6 +24,11 @@ public class CallbackUpdate implements UpdateWrapper {
     }
 
     @Override
+    public String getText() {
+        throw new NotImplementedException();
+    }
+
+    @Override
     public String getUsername() {
         throw new NotImplementedException();
     }
@@ -41,5 +46,10 @@ public class CallbackUpdate implements UpdateWrapper {
     @Override
     public Boolean isPrivate() {
         throw new NotImplementedException();
+    }
+
+    @Override
+    public Update getUpdate() {
+        return update;
     }
 }

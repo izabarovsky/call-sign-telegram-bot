@@ -5,6 +5,8 @@ import com.izabarovsky.callsign.telegram.bot.tg.HandlerResult;
 import com.izabarovsky.callsign.telegram.bot.tg.dialog.DialogState;
 import com.izabarovsky.callsign.telegram.bot.tg.dialog.DialogStateService;
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.Handler;
+import com.izabarovsky.callsign.telegram.bot.tg.update.MessageUpdate;
+import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 public class CallSignValidationTest {
     @Autowired
-    private Handler<Update, HandlerResult> handler;
+    private Handler<UpdateWrapper, HandlerResult> handler;
     @Autowired
     private DialogStateService dialogStateService;
     @Autowired
@@ -31,7 +33,8 @@ public class CallSignValidationTest {
         var chatId = randomId();
         var tgId = randomId();
         dialogStateService.putState(tgId, DialogState.EXPECT_UNOFFICIAL);
-        var msg = handler.handle(updFromUser(tgId, chatId, exists)).getResponseMsg();
+        var updateWrapper = updFromUser(tgId, chatId, exists);
+        var msg = handler.handle(updateWrapper).getResponseMsg();
         assertEquals(textCallSingIsBooked(exists), msg.getText());
         assertEquals(String.valueOf(chatId), msg.getChatId(), "Response to chatId");
     }
@@ -42,7 +45,8 @@ public class CallSignValidationTest {
         var chatId = randomId();
         var tgId = randomId();
         dialogStateService.putState(tgId, DialogState.EXPECT_OFFICIAL);
-        var msg = handler.handle(updFromUser(tgId, chatId, exists)).getResponseMsg();
+        var updateWrapper = updFromUser(tgId, chatId, exists);
+        var msg = handler.handle(updateWrapper).getResponseMsg();
         assertEquals(textCallSingIsBooked(exists), msg.getText());
         assertEquals(String.valueOf(chatId), msg.getChatId(), "Response to chatId");
     }
@@ -52,7 +56,8 @@ public class CallSignValidationTest {
         var chatId = randomId();
         var tgId = randomId();
         dialogStateService.putState(tgId, DialogState.EXPECT_OFFICIAL);
-        var msg = handler.handle(updFromUser(tgId, chatId, RandomStringUtils.randomAlphabetic(5)))
+        var updateWrapper = updFromUser(tgId, chatId, RandomStringUtils.randomAlphabetic(5));
+        var msg = handler.handle(updateWrapper)
                 .getResponseMsg();
         assertEquals(textCallSingIsInvalid(), msg.getText());
         assertEquals(String.valueOf(chatId), msg.getChatId(), "Response to chatId");

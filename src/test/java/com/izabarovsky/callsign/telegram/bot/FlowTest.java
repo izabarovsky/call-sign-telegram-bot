@@ -6,6 +6,7 @@ import com.izabarovsky.callsign.telegram.bot.tg.HandlerResult;
 import com.izabarovsky.callsign.telegram.bot.tg.dialog.DialogState;
 import com.izabarovsky.callsign.telegram.bot.tg.dialog.DialogStateService;
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.Handler;
+import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 import com.izabarovsky.callsign.telegram.bot.tg.utils.TextUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FlowTest {
 
     @Autowired
-    private Handler<Update, HandlerResult> handler;
+    private Handler<UpdateWrapper, HandlerResult> handler;
     @Autowired
     private DialogStateService dialogStateService;
     @Autowired
@@ -97,7 +98,7 @@ public class FlowTest {
         var userName = "test";
         var expected = TextUtils.textHelloNewcomer(userName);
         var update = updFromUser(tgId, chatId, Command.SEARCH);
-        update.getMessage().getFrom().setUserName(userName);
+        update.getUpdate().getMessage().getFrom().setUserName(userName);
         var result = handler.handle(update).getResponseMsg();
         assertEquals(expected, result.getText());
         assertEquals(String.valueOf(chatId), result.getChatId(), "Response to chatId");

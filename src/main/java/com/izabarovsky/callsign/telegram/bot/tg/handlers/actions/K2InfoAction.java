@@ -5,14 +5,14 @@ import com.izabarovsky.callsign.telegram.bot.service.CallSignService;
 import com.izabarovsky.callsign.telegram.bot.tg.Command;
 import com.izabarovsky.callsign.telegram.bot.tg.HandlerResult;
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.Handler;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 
 import java.util.Optional;
 import java.util.regex.Pattern;
 
 import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.*;
 
-public class K2InfoAction implements Handler<Update, HandlerResult> {
+public class K2InfoAction implements Handler<UpdateWrapper, HandlerResult> {
     private final CallSignService callSignService;
     private final String pattern = "^" + Command.K2_INFO.value() + "@(.+)";
 
@@ -21,11 +21,10 @@ public class K2InfoAction implements Handler<Update, HandlerResult> {
     }
 
     @Override
-    public HandlerResult handle(Update payload) {
-        var chatId = payload.getMessage().getChatId();
-        var threadId = payload.getMessage().getMessageThreadId();
-        var matcher = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE)
-                .matcher(payload.getMessage().getText());
+    public HandlerResult handle(UpdateWrapper payload) {
+        var chatId = payload.getChatId();
+        var threadId = payload.getThreadId();
+        var matcher = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(payload.getText());
         if (matcher.find()) {
             String username = matcher.group(1);
             Optional<CallSignModel> callSignModel = callSignService.findByUsername(username);

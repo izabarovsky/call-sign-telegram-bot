@@ -1,11 +1,11 @@
 package com.izabarovsky.callsign.telegram.bot.tg.handlers.conditions;
 
 import com.izabarovsky.callsign.telegram.bot.tg.dialog.DialogStateService;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 
 import java.util.Objects;
 
-public class IsSession implements Condition<Update> {
+public class IsSession implements Condition<UpdateWrapper> {
     private final DialogStateService dialogService;
 
     public IsSession(DialogStateService dialogService) {
@@ -13,8 +13,8 @@ public class IsSession implements Condition<Update> {
     }
 
     @Override
-    public boolean check(Update update) {
-        return Objects.nonNull(dialogService.getState(update.getMessage().getFrom().getId()));
+    public boolean check(UpdateWrapper update) {
+        return Objects.nonNull(dialogService.getState(update.getUserId()));
     }
 
 }

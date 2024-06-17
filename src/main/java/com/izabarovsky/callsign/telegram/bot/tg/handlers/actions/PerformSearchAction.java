@@ -4,14 +4,14 @@ import com.izabarovsky.callsign.telegram.bot.service.CallSignModel;
 import com.izabarovsky.callsign.telegram.bot.service.CallSignService;
 import com.izabarovsky.callsign.telegram.bot.tg.HandlerResult;
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.Handler;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.msgSearchResult;
 
-public class PerformSearchAction implements Handler<Update, HandlerResult> {
+public class PerformSearchAction implements Handler<UpdateWrapper, HandlerResult> {
     private final CallSignService callSignService;
 
     public PerformSearchAction(CallSignService callSignService) {
@@ -19,14 +19,14 @@ public class PerformSearchAction implements Handler<Update, HandlerResult> {
     }
 
     @Override
-    public HandlerResult handle(Update payload) {
-        var chatId = payload.getMessage().getChatId();
-        var text = payload.getMessage().getText();
+    public HandlerResult handle(UpdateWrapper payload) {
+        var chatId = payload.getChatId();
+        var text = payload.getText();
         List<CallSignModel> k2 = callSignService.findByK2PartialCallSign(text);
         List<CallSignModel> official = callSignService.findByOfficialPartialCallSign(text);
         List<CallSignModel> all = new ArrayList<>(k2);
         all.addAll(official);
-        return msgSearchResult(chatId, payload.getMessage().getMessageThreadId(), all);
+        return msgSearchResult(chatId, payload.getThreadId(), all);
     }
 
 }

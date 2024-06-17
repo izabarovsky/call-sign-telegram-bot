@@ -23,6 +23,11 @@ public class MessageUpdate implements UpdateWrapper {
     }
 
     @Override
+    public String getText() {
+        return update.getMessage().getText();
+    }
+
+    @Override
     public String getUsername() {
         return update.getMessage().getFrom().getUserName();
     }
@@ -40,5 +45,10 @@ public class MessageUpdate implements UpdateWrapper {
     @Override
     public Boolean isPrivate() {
         return update.getMessage().getChat().isUserChat();
+    }
+
+    @Override
+    public Update getUpdate() {
+        return update;
     }
 }

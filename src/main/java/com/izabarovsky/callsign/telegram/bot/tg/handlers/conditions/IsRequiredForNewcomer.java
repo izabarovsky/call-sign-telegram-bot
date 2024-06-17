@@ -2,9 +2,9 @@ package com.izabarovsky.callsign.telegram.bot.tg.handlers.conditions;
 
 import com.izabarovsky.callsign.telegram.bot.tg.dialog.DialogState;
 import com.izabarovsky.callsign.telegram.bot.tg.dialog.DialogStateService;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 
-public class IsRequiredForNewcomer implements Condition<Update> {
+public class IsRequiredForNewcomer implements Condition<UpdateWrapper> {
     private final DialogStateService dialogService;
 
     public IsRequiredForNewcomer(DialogStateService dialogService) {
@@ -12,8 +12,8 @@ public class IsRequiredForNewcomer implements Condition<Update> {
     }
 
     @Override
-    public boolean check(Update update) {
-        return DialogState.EXPECT_UNOFFICIAL.equals(dialogService.getState(update.getMessage().getFrom().getId()));
+    public boolean check(UpdateWrapper update) {
+        return DialogState.EXPECT_UNOFFICIAL.equals(dialogService.getState(update.getUserId()));
     }
 
 }

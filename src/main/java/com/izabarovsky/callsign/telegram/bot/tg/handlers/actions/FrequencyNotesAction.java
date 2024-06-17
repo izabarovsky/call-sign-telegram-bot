@@ -2,16 +2,16 @@ package com.izabarovsky.callsign.telegram.bot.tg.handlers.actions;
 
 import com.izabarovsky.callsign.telegram.bot.tg.HandlerResult;
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.Handler;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 
 import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.msgFrequencyNotes;
 
-public class FrequencyNotesAction implements Handler<Update, HandlerResult> {
+public class FrequencyNotesAction implements Handler<UpdateWrapper, HandlerResult> {
 
     @Override
-    public HandlerResult handle(Update payload) {
-        var chatId = payload.getMessage().getChatId();
-        var threadId = payload.getMessage().getMessageThreadId();
+    public HandlerResult handle(UpdateWrapper payload) {
+        var chatId = payload.getChatId();
+        var threadId = payload.getThreadId();
         return msgFrequencyNotes(chatId, threadId);
     }
 }
