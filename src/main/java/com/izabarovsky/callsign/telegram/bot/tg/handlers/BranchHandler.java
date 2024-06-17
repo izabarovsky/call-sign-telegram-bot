@@ -2,18 +2,18 @@ package com.izabarovsky.callsign.telegram.bot.tg.handlers;
 
 import com.izabarovsky.callsign.telegram.bot.tg.HandlerResult;
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.conditions.Condition;
+import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 import lombok.Builder;
-import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Builder
-public class BranchHandler implements Handler<Update, HandlerResult> {
+public class BranchHandler implements Handler<UpdateWrapper, HandlerResult> {
 
-    private Condition<Update> condition;
-    private Handler<Update, HandlerResult> branchTrue;
-    private Handler<Update, HandlerResult> branchFalse;
+    private Condition<UpdateWrapper> condition;
+    private Handler<UpdateWrapper, HandlerResult> branchTrue;
+    private Handler<UpdateWrapper, HandlerResult> branchFalse;
 
     @Override
-    public HandlerResult handle(Update payload) {
+    public HandlerResult handle(UpdateWrapper payload) {
         return condition.check(payload) ? branchTrue.handle(payload) : branchFalse.handle(payload);
     }
 

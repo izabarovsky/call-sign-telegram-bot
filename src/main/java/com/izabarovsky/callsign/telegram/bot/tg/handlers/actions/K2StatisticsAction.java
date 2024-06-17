@@ -3,11 +3,11 @@ package com.izabarovsky.callsign.telegram.bot.tg.handlers.actions;
 import com.izabarovsky.callsign.telegram.bot.service.CallSignService;
 import com.izabarovsky.callsign.telegram.bot.tg.HandlerResult;
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.Handler;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 
 import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.msgStatistics;
 
-public class K2StatisticsAction implements Handler<Update, HandlerResult> {
+public class K2StatisticsAction implements Handler<UpdateWrapper, HandlerResult> {
     private final CallSignService callSignService;
 
     public K2StatisticsAction(CallSignService callSignService) {
@@ -15,9 +15,9 @@ public class K2StatisticsAction implements Handler<Update, HandlerResult> {
     }
 
     @Override
-    public HandlerResult handle(Update payload) {
-        var chatId = payload.getMessage().getChatId();
-        var threadId = payload.getMessage().getMessageThreadId();
+    public HandlerResult handle(UpdateWrapper payload) {
+        var chatId = payload.getChatId();
+        var threadId = payload.getThreadId();
         return msgStatistics(chatId, threadId, callSignService.findAll());
     }
 }

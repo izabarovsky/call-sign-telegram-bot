@@ -1,12 +1,12 @@
 package com.izabarovsky.callsign.telegram.bot.tg.handlers.conditions;
 
 import com.izabarovsky.callsign.telegram.bot.tg.Command;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 
 public class CmdConditionsFactory {
 
-    public static Condition<Update> cmdCondition(Command cmd) {
-        return update -> update.getMessage().getText().toLowerCase().startsWith(cmd.value().toLowerCase());
+    public static Condition<UpdateWrapper> cmdCondition(Command cmd) {
+        return update -> update.getText().toLowerCase().startsWith(cmd.value().toLowerCase());
     }
 
 }

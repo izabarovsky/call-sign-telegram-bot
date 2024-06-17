@@ -1,12 +1,12 @@
 package com.izabarovsky.callsign.telegram.bot.tg.handlers.conditions;
 
-import org.telegram.telegrambots.meta.api.objects.Update;
+import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 
-public class IsCommand implements Condition<Update> {
+public class IsCommand implements Condition<UpdateWrapper> {
 
     @Override
-    public boolean check(Update update) {
-        return update.getMessage().getText().startsWith("/");
+    public boolean check(UpdateWrapper update) {
+        return update.getText().startsWith("/");
     }
 
 }

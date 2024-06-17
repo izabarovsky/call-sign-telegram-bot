@@ -1,12 +1,12 @@
 package com.izabarovsky.callsign.telegram.bot.tg.handlers.conditions;
 
-import org.telegram.telegrambots.meta.api.objects.Update;
+import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 
-public class IsPersonalChat implements Condition<Update> {
+public class IsPersonalChat implements Condition<UpdateWrapper> {
 
     @Override
-    public boolean check(Update update) {
-        return update.getMessage().getChat().isUserChat();
+    public boolean check(UpdateWrapper update) {
+        return update.isPrivate();
     }
 
 }

@@ -8,10 +8,10 @@ import com.izabarovsky.callsign.telegram.bot.tg.dialog.DialogStateService;
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.actions.*;
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.conditions.*;
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.validator.OfficialCallSignValidator;
+import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 import com.izabarovsky.callsign.telegram.bot.utils.CsvUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static com.izabarovsky.callsign.telegram.bot.tg.handlers.conditions.CmdConditionsFactory.cmdCondition;
 import static com.izabarovsky.callsign.telegram.bot.tg.handlers.conditions.DialogConditionsFactory.dialogCondition;
@@ -19,44 +19,92 @@ import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.*;
 
 @Slf4j
 @Component
-public class DefaultRootHandler implements Handler<Update, HandlerResult>, RootHandler<Update, HandlerResult> {
-    private final DialogStateService dialogService;
-    private final CallSignService callSignService;
-    private final OfficialCallSignValidator officialCallSignValidator;
-    private final CsvUtil csvUtil;
-    private final Handler<Update, HandlerResult> dummyHandler = s -> null;
+public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>, RootHandler<UpdateWrapper, HandlerResult> {
+    private final Handler<UpdateWrapper, HandlerResult> dummyHandler = s -> null;
+    private final Condition<UpdateWrapper> isMyK2Info;
+    private final Condition<UpdateWrapper> isK2Info;
+    private final Condition<UpdateWrapper> isStatistics;
+    private final Condition<UpdateWrapper> isFrequencyNotes;
+    private final Condition<UpdateWrapper> isCommand;
+    private final Condition<UpdateWrapper> isPersonalChat;
+    private final Condition<UpdateWrapper> isSession;
+    private final Condition<UpdateWrapper> isExistsUser;
+    private final Condition<UpdateWrapper> isSkip;
+    private final Condition<UpdateWrapper> isCancel;
+    private final Condition<UpdateWrapper> isRequiredForNewcomer;
+    private final Condition<UpdateWrapper> isCreate;
+    private final Condition<UpdateWrapper> isEdit;
+    private final Condition<UpdateWrapper> isGetAll;
+    private final Condition<UpdateWrapper> isSearch;
+    private final Condition<UpdateWrapper> isWaitForK2CallSign;
+    private final Condition<UpdateWrapper> isWaitForOfficialCallSign;
+    private final Condition<UpdateWrapper> isWaitForQth;
+    private final Condition<UpdateWrapper> isWaitForSearch;
+
+    private final Handler<UpdateWrapper, HandlerResult> myK2InfoAction;
+    private final Handler<UpdateWrapper, HandlerResult> k2InfoAction;
+    private final Handler<UpdateWrapper, HandlerResult> k2StatisticsAction;
+    private final Handler<UpdateWrapper, HandlerResult> frequencyNotesAction;
+    private final Handler<UpdateWrapper, HandlerResult> nextStateAction;
+    private final Handler<UpdateWrapper, HandlerResult> cleanStateAction;
+    private final Handler<UpdateWrapper, HandlerResult> saveK2CallSignAction;
+    private final Handler<UpdateWrapper, HandlerResult> saveOfficialCallSignAction;
+    private final Handler<UpdateWrapper, HandlerResult> saveQthAction;
+    private final Handler<UpdateWrapper, HandlerResult> performSearchAction;
+    private final Handler<UpdateWrapper, HandlerResult> startDialogCreateAction;
+    private final Handler<UpdateWrapper, HandlerResult> startDialogEditAction;
+    private final Handler<UpdateWrapper, HandlerResult> startDialogSearchAction;
+    private final Handler<UpdateWrapper, HandlerResult> getAllCallSignsAction;
+
 
     public DefaultRootHandler(DialogStateService dialogService,
                               CallSignService callSignService,
                               OfficialCallSignValidator officialCallSignValidator,
                               CsvUtil csvUtil
     ) {
-        this.dialogService = dialogService;
-        this.callSignService = callSignService;
-        this.officialCallSignValidator = officialCallSignValidator;
-        this.csvUtil = csvUtil;
+        isMyK2Info = cmdCondition(Command.MY_K2_INFO);
+        isK2Info = cmdCondition(Command.K2_INFO);
+        isStatistics = cmdCondition(Command.STATISTICS);
+        isFrequencyNotes = cmdCondition(Command.FREQUENCY_NOTES);
+        isCommand = new IsCommand();
+        isPersonalChat = new IsPersonalChat();
+        isSession = new IsSession(dialogService);
+        isExistsUser = new IsExistsUser(callSignService);
+        isSkip = cmdCondition(Command.SKIP);
+        isCancel = cmdCondition(Command.CANCEL);
+        isRequiredForNewcomer = new IsRequiredForNewcomer(dialogService);
+        isCreate = cmdCondition(Command.CREATE);
+        isEdit = cmdCondition(Command.EDIT);
+        isGetAll = cmdCondition(Command.GET_ALL);
+        isSearch = cmdCondition(Command.SEARCH);
+        isWaitForK2CallSign = dialogCondition(dialogService, DialogState.EXPECT_UNOFFICIAL);
+        isWaitForOfficialCallSign = dialogCondition(dialogService, DialogState.EXPECT_OFFICIAL);
+        isWaitForQth = dialogCondition(dialogService, DialogState.EXPECT_QTH);
+        isWaitForSearch = dialogCondition(dialogService, DialogState.EXPECT_SEARCH);
+
+        myK2InfoAction = new MyK2InfoAction(callSignService);
+        k2InfoAction = new K2InfoAction(callSignService);
+        k2StatisticsAction = new K2StatisticsAction(callSignService);
+        frequencyNotesAction = new FrequencyNotesAction();
+        nextStateAction = new NextStateAction(dialogService);
+        cleanStateAction = new CleanStateAction(dialogService);
+        saveK2CallSignAction = new SaveK2CallSignAction(callSignService, dialogService);
+        saveOfficialCallSignAction = new SaveOfficialCallSignAction(callSignService, dialogService,
+                officialCallSignValidator);
+        saveQthAction = new SaveQthAction(callSignService, dialogService);
+        performSearchAction = new PerformSearchAction(callSignService);
+        startDialogCreateAction = new StartDialogCreateAction(dialogService);
+        startDialogEditAction = new StartDialogEditAction(dialogService);
+        startDialogSearchAction = new StartDialogSearchAction(dialogService);
+        getAllCallSignsAction = new GetAllCallSignsAction(callSignService, csvUtil);
     }
 
-    public HandlerResult handle(Update update) {
+    public HandlerResult handle(UpdateWrapper update) {
         log.info("{}", update);
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            return rootHandler().handle(update);
-        }
-        return null;
+        return rootHandler().handle(update);
     }
 
-    private Handler<Update, HandlerResult> rootHandler() {
-        Condition<Update> isMyK2Info = cmdCondition(Command.MY_K2_INFO);
-        Condition<Update> isK2Info = cmdCondition(Command.K2_INFO);
-        Condition<Update> isStatistics = cmdCondition(Command.STATISTICS);
-        Condition<Update> isFrequencyNotes = cmdCondition(Command.FREQUENCY_NOTES);
-        Condition<Update> isCommand = new IsCommand();
-        Condition<Update> isPersonalChat = new IsPersonalChat();
-        Handler<Update, HandlerResult> myK2InfoAction = new MyK2InfoAction(callSignService);
-        Handler<Update, HandlerResult> k2InfoAction = new K2InfoAction(callSignService);
-        Handler<Update, HandlerResult> k2StatisticsAction = new K2StatisticsAction(callSignService);
-        Handler<Update, HandlerResult> frequencyNotesAction = new FrequencyNotesAction();
-
+    private Handler<UpdateWrapper, HandlerResult> rootHandler() {
         var commandNode = BranchHandler.builder()
                 .condition(isCommand)
                 .branchTrue(commandBranch())
@@ -77,8 +125,6 @@ public class DefaultRootHandler implements Handler<Update, HandlerResult>, RootH
     }
 
     private BranchHandler commandBranch() {
-        Condition<Update> isSession = new IsSession(dialogService);
-
         return BranchHandler.builder()
                 .condition(isSession)
                 .branchTrue(commandInSessionBranch())
@@ -87,30 +133,22 @@ public class DefaultRootHandler implements Handler<Update, HandlerResult>, RootH
     }
 
     private BranchHandler commandInSessionBranch() {
-        Condition<Update> isExistsUser = new IsExistsUser(callSignService);
-        Condition<Update> isSkip = cmdCondition(Command.SKIP);
-        Condition<Update> isCancel = cmdCondition(Command.CANCEL);
-        Condition<Update> isRequiredForNewcomer = new IsRequiredForNewcomer(dialogService);
-
-        Handler<Update, HandlerResult> nextStateAction = new NextStateAction(dialogService);
-        Handler<Update, HandlerResult> cleanStateAction = new CleanStateAction(dialogService);
-
         var existsUser = BranchHandler.builder()
                 .condition(isSkip)
                 .branchTrue(nextStateAction)
-                .branchFalse(s -> msgOnAnyUnknown(s.getMessage().getChatId()))
+                .branchFalse(s -> msgOnAnyUnknown(s.getChatId()))
                 .build();
 
         var newcomerSkipNode = BranchHandler.builder()
                 .condition(isRequiredForNewcomer)
-                .branchTrue(s -> msgCantSkip(s.getMessage().getChatId()))
-                .branchFalse(s -> msgOnAnyUnknown(s.getMessage().getChatId()))
+                .branchTrue(s -> msgCantSkip(s.getChatId()))
+                .branchFalse(s -> msgOnAnyUnknown(s.getChatId()))
                 .build();
 
         var newcomerUser = BranchHandler.builder()
                 .condition(isSkip)
                 .branchTrue(newcomerSkipNode)
-                .branchFalse(s -> msgOnAnyUnknown(s.getMessage().getChatId()))
+                .branchFalse(s -> msgOnAnyUnknown(s.getChatId()))
                 .build();
 
         var existsUserNode = BranchHandler.builder()
@@ -127,33 +165,23 @@ public class DefaultRootHandler implements Handler<Update, HandlerResult>, RootH
     }
 
     private BranchHandler commandOutSessionBranch() {
-        Condition<Update> isExistsUser = new IsExistsUser(callSignService);
-        Condition<Update> isCreate = cmdCondition(Command.CREATE);
-        Condition<Update> isEdit = cmdCondition(Command.EDIT);
-        Condition<Update> isMyK2Info = cmdCondition(Command.MY_K2_INFO);
-        Condition<Update> isK2Info = cmdCondition(Command.K2_INFO);
-        Condition<Update> isGetAll = cmdCondition(Command.GET_ALL);
-        Condition<Update> isSearch = cmdCondition(Command.SEARCH);
-        Condition<Update> isStatistics = cmdCondition(Command.STATISTICS);
-        Condition<Update> isFrequencyNotes = cmdCondition(Command.FREQUENCY_NOTES);
-
         var newcomerUser = BranchHandler.builder()
                 .condition(isCreate)
-                .branchTrue(new StartDialogCreateAction(dialogService))
+                .branchTrue(startDialogCreateAction)
                 .branchFalse(s -> msgNewcomer(
-                        s.getMessage().getChatId(),
-                        s.getMessage().getMessageThreadId(),
-                        s.getMessage().getFrom().getUserName()))
+                        s.getChatId(),
+                        s.getThreadId(),
+                        s.getUsername()))
                 .build();
 
-        var existsUserChain = new ChainHandler(s -> msgOnAnyUnknown(s.getMessage().getChatId()))
-                .setHandler(isEdit, new StartDialogEditAction(dialogService))
-                .setHandler(isMyK2Info, new MyK2InfoAction(callSignService))
-                .setHandler(isK2Info, new K2InfoAction(callSignService))
-                .setHandler(isSearch, new StartDialogSearchAction(dialogService))
-                .setHandler(isGetAll, new GatAllCallSignsAction(callSignService, csvUtil))
-                .setHandler(isStatistics, new K2StatisticsAction(callSignService))
-                .setHandler(isFrequencyNotes, new FrequencyNotesAction());
+        var existsUserChain = new ChainHandler(s -> msgOnAnyUnknown(s.getChatId()))
+                .setHandler(isEdit, startDialogEditAction)
+                .setHandler(isMyK2Info, myK2InfoAction)
+                .setHandler(isK2Info, k2InfoAction)
+                .setHandler(isSearch, startDialogSearchAction)
+                .setHandler(isGetAll, getAllCallSignsAction)
+                .setHandler(isStatistics, k2StatisticsAction)
+                .setHandler(isFrequencyNotes, frequencyNotesAction);
 
         return BranchHandler.builder()
                 .condition(isExistsUser)
@@ -163,19 +191,7 @@ public class DefaultRootHandler implements Handler<Update, HandlerResult>, RootH
     }
 
     private BranchHandler textBranch() {
-        Condition<Update> isSession = new IsSession(dialogService);
-        Condition<Update> isWaitForK2CallSign = dialogCondition(dialogService, DialogState.EXPECT_UNOFFICIAL);
-        Condition<Update> isWaitForOfficialCallSign = dialogCondition(dialogService, DialogState.EXPECT_OFFICIAL);
-        Condition<Update> isWaitForQth = dialogCondition(dialogService, DialogState.EXPECT_QTH);
-        Condition<Update> isWaitForSearch = dialogCondition(dialogService, DialogState.EXPECT_SEARCH);
-
-        var saveK2CallSignAction = new SaveK2CallSignAction(callSignService, dialogService);
-        var saveOfficialCallSignAction = new SaveOfficialCallSignAction(callSignService, dialogService,
-                officialCallSignValidator);
-        var saveQthAction = new SaveQthAction(callSignService, dialogService);
-        var performSearchAction = new PerformSearchAction(callSignService);
-
-        var sessionChain = new ChainHandler(s -> msgOnAnyUnknown(s.getMessage().getChatId()))
+        var sessionChain = new ChainHandler(s -> msgOnAnyUnknown(s.getChatId()))
                 .setHandler(isWaitForK2CallSign, saveK2CallSignAction)
                 .setHandler(isWaitForOfficialCallSign, saveOfficialCallSignAction)
                 .setHandler(isWaitForQth, saveQthAction)
@@ -184,7 +200,7 @@ public class DefaultRootHandler implements Handler<Update, HandlerResult>, RootH
         return BranchHandler.builder()
                 .condition(isSession)
                 .branchTrue(sessionChain)
-                .branchFalse(s -> msgOnAnyUnknown(s.getMessage().getChatId()))
+                .branchFalse(s -> msgOnAnyUnknown(s.getChatId()))
                 .build();
     }
 

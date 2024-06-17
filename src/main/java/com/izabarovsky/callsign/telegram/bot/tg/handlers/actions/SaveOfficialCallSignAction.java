@@ -7,11 +7,11 @@ import com.izabarovsky.callsign.telegram.bot.tg.dialog.DialogState;
 import com.izabarovsky.callsign.telegram.bot.tg.dialog.DialogStateService;
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.Handler;
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.validator.OfficialCallSignValidator;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 
 import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.*;
 
-public class SaveOfficialCallSignAction implements Handler<Update, HandlerResult> {
+public class SaveOfficialCallSignAction implements Handler<UpdateWrapper, HandlerResult> {
     private final CallSignService callSignService;
     private final DialogStateService dialogStateService;
     private final OfficialCallSignValidator officialCallSignValidator;
@@ -25,24 +25,23 @@ public class SaveOfficialCallSignAction implements Handler<Update, HandlerResult
     }
 
     @Override
-    public HandlerResult handle(Update payload) {
-        var msg = payload.getMessage();
-        String officialCallSign = msg.getText().toUpperCase();
+    public HandlerResult handle(UpdateWrapper payload) {
+        String officialCallSign = payload.getText().toUpperCase();
         if (!officialCallSignValidator.isValid(officialCallSign)) {
-            return msgCallSingIsInvalid(msg.getChatId());
+            return msgCallSingIsInvalid(payload.getChatId());
         }
         if (callSignService.findByOfficialSign(officialCallSign).isPresent()) {
-            return msgCallSingIsBooked(msg.getChatId(), officialCallSign);
+            return msgCallSingIsBooked(payload.getChatId(), officialCallSign);
         }
-        CallSignModel callSignModel = callSignService.getCallSign(msg.getFrom().getId())
+        CallSignModel callSignModel = callSignService.getCallSign(payload.getUserId())
                 .orElseThrow(() -> new RuntimeException("Try to get callsign for official update, but not found"));
-        callSignModel.setUserName(msg.getFrom().getUserName());
-        callSignModel.setFirstName(msg.getFrom().getFirstName());
-        callSignModel.setLastName(msg.getFrom().getLastName());
+        callSignModel.setUserName(payload.getUsername());
+        callSignModel.setFirstName(payload.getFirstName());
+        callSignModel.setLastName(payload.getLastName());
         callSignModel.setOfficialCallSign(officialCallSign);
         callSignService.save(callSignModel);
-        dialogStateService.putState(msg.getFrom().getId(), DialogState.EXPECT_QTH);
-        return msgEnterValueOrSkip(msg.getChatId(), "QTH");
+        dialogStateService.putState(payload.getUserId(), DialogState.EXPECT_QTH);
+        return msgEnterValueOrSkip(payload.getChatId(), "QTH");
     }
 
 }

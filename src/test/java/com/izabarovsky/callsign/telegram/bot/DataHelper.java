@@ -3,6 +3,8 @@ package com.izabarovsky.callsign.telegram.bot;
 import com.izabarovsky.callsign.telegram.bot.persistence.CallSignRepository;
 import com.izabarovsky.callsign.telegram.bot.persistence.entity.CallSignEntity;
 import com.izabarovsky.callsign.telegram.bot.tg.Command;
+import com.izabarovsky.callsign.telegram.bot.tg.update.MessageUpdate;
+import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -16,18 +18,18 @@ import static org.apache.commons.lang3.RandomUtils.nextInt;
 
 public class DataHelper {
 
-    public static Update updFromGroupChat(long userId, long chatId, int threadId, String text) {
+    public static MessageUpdate updFromGroupChat(long userId, long chatId, int threadId, String text) {
         var update = updFromUser(userId, chatId, text);
-        update.getMessage().getChat().setType("supergroup");
-        update.getMessage().setMessageThreadId(threadId);
+        update.getUpdate().getMessage().getChat().setType("supergroup");
+        update.getUpdate().getMessage().setMessageThreadId(threadId);
         return update;
     }
 
-    public static Update updFromUser(long userId, long chatId, Command command) {
+    public static MessageUpdate updFromUser(long userId, long chatId, Command command) {
         return updFromUser(userId, chatId, command.value());
     }
 
-    public static Update updFromUser(long userId, long chatId, String text) {
+    public static MessageUpdate updFromUser(long userId, long chatId, String text) {
         Update update = new Update();
         Message message = new Message();
         message.setText(text);
@@ -39,7 +41,7 @@ public class DataHelper {
         user.setId(userId);
         message.setFrom(user);
         update.setMessage(message);
-        return update;
+        return new MessageUpdate(update);
     }
 
     public static String k2CallSign() {

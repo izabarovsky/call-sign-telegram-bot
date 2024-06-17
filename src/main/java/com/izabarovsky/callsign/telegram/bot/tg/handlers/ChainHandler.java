@@ -2,28 +2,28 @@ package com.izabarovsky.callsign.telegram.bot.tg.handlers;
 
 import com.izabarovsky.callsign.telegram.bot.tg.HandlerResult;
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.conditions.Condition;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class ChainHandler implements Handler<Update, HandlerResult> {
+public class ChainHandler implements Handler<UpdateWrapper, HandlerResult> {
 
     private final List<ConditionHandlerPair> list;
-    private final Handler<Update, HandlerResult> defaultHandler;
+    private final Handler<UpdateWrapper, HandlerResult> defaultHandler;
 
-    public ChainHandler(Handler<Update, HandlerResult> defaultHandler) {
+    public ChainHandler(Handler<UpdateWrapper, HandlerResult> defaultHandler) {
         this.defaultHandler = defaultHandler;
         this.list = new LinkedList<>();
     }
 
-    public ChainHandler setHandler(Condition<Update> condition, Handler<Update, HandlerResult> handler) {
+    public ChainHandler setHandler(Condition<UpdateWrapper> condition, Handler<UpdateWrapper, HandlerResult> handler) {
         this.list.add(new ConditionHandlerPair(condition, handler));
         return this;
     }
 
     @Override
-    public HandlerResult handle(Update payload) {
+    public HandlerResult handle(UpdateWrapper payload) {
         return list.stream()
                 .filter(s -> s.condition().check(payload))
                 .findFirst()
@@ -32,7 +32,7 @@ public class ChainHandler implements Handler<Update, HandlerResult> {
                 .handle(payload);
     }
 
-    record ConditionHandlerPair(Condition<Update> condition, Handler<Update, HandlerResult> handler) {
+    record ConditionHandlerPair(Condition<UpdateWrapper> condition, Handler<UpdateWrapper, HandlerResult> handler) {
     }
 
 }

@@ -6,7 +6,7 @@ import com.izabarovsky.callsign.telegram.bot.tg.HandlerResult;
 import com.izabarovsky.callsign.telegram.bot.tg.dialog.DialogState;
 import com.izabarovsky.callsign.telegram.bot.tg.dialog.DialogStateService;
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.Handler;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.msgCallSingIsBooked;
 import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.msgEnterValueOrSkip;
 
-public class SaveK2CallSignAction implements Handler<Update, HandlerResult> {
+public class SaveK2CallSignAction implements Handler<UpdateWrapper, HandlerResult> {
     private final CallSignService callSignService;
     private final DialogStateService dialogStateService;
 
@@ -24,10 +24,10 @@ public class SaveK2CallSignAction implements Handler<Update, HandlerResult> {
     }
 
     @Override
-    public HandlerResult handle(Update payload) {
-        var id = payload.getMessage().getFrom().getId();
-        var chatId = payload.getMessage().getChatId();
-        String k2CallSign = payload.getMessage().getText();
+    public HandlerResult handle(UpdateWrapper payload) {
+        var id = payload.getUserId();
+        var chatId = payload.getChatId();
+        String k2CallSign = payload.getText();
         if (callSignService.findByK2CallSign(k2CallSign).isPresent()) {
             return msgCallSingIsBooked(chatId, k2CallSign);
         }
@@ -36,12 +36,12 @@ public class SaveK2CallSignAction implements Handler<Update, HandlerResult> {
                 .tgId(id)
                 .build();
         CallSignModel callSignModel = callSignModelOpt.orElseGet(newest);
-        callSignModel.setUserName(payload.getMessage().getFrom().getUserName());
-        callSignModel.setFirstName(payload.getMessage().getFrom().getFirstName());
-        callSignModel.setLastName(payload.getMessage().getFrom().getLastName());
+        callSignModel.setUserName(payload.getUsername());
+        callSignModel.setFirstName(payload.getFirstName());
+        callSignModel.setLastName(payload.getLastName());
         callSignModel.setK2CallSign(k2CallSign);
         callSignService.save(callSignModel);
-        dialogStateService.putState(payload.getMessage().getFrom().getId(), DialogState.EXPECT_OFFICIAL);
+        dialogStateService.putState(id, DialogState.EXPECT_OFFICIAL);
         return msgEnterValueOrSkip(chatId, "OfficialCallSign");
     }
 

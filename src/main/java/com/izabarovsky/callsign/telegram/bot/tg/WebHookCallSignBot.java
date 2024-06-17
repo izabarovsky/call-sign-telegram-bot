@@ -1,6 +1,8 @@
 package com.izabarovsky.callsign.telegram.bot.tg;
 
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.RootHandler;
+import com.izabarovsky.callsign.telegram.bot.tg.update.MessageUpdate;
+import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -18,9 +20,9 @@ import static java.util.Objects.nonNull;
 @Component
 public class WebHookCallSignBot extends SpringWebhookBot {
     private final BotConfig botConfig;
-    private final RootHandler<Update, HandlerResult> handler;
+    private final RootHandler<UpdateWrapper, HandlerResult> handler;
 
-    public WebHookCallSignBot(SetWebhook setWebhook, BotConfig botConfig, RootHandler<Update, HandlerResult> handler) {
+    public WebHookCallSignBot(SetWebhook setWebhook, BotConfig botConfig, RootHandler<UpdateWrapper, HandlerResult> handler) {
         super(setWebhook, botConfig.getToken());
         this.botConfig = botConfig;
         this.handler = handler;
@@ -32,7 +34,7 @@ public class WebHookCallSignBot extends SpringWebhookBot {
             update.getCallbackQuery();
         } else {
             if (nonNull(update.getMessage()) && isGroupMember(update.getMessage().getFrom().getId())) {
-                var result = handler.handle(update);
+                var result = handler.handle(new MessageUpdate(update));
                 return handleResult(result);
             }
         }
