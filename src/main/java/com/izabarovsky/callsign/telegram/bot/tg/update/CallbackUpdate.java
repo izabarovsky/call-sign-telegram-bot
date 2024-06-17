@@ -10,12 +10,12 @@ public class CallbackUpdate implements UpdateWrapper {
 
     @Override
     public Long getUserId() {
-        throw new NotImplementedException();
+        return update.getCallbackQuery().getFrom().getId();
     }
 
     @Override
     public Long getChatId() {
-        throw new NotImplementedException();
+        return update.getCallbackQuery().getMessage().getChatId();
     }
 
     @Override
@@ -25,22 +25,22 @@ public class CallbackUpdate implements UpdateWrapper {
 
     @Override
     public String getText() {
-        throw new NotImplementedException();
+        return update.getCallbackQuery().getData();
     }
 
     @Override
     public String getUsername() {
-        throw new NotImplementedException();
+        return update.getCallbackQuery().getFrom().getUserName();
     }
 
     @Override
     public String getFirstName() {
-        throw new NotImplementedException();
+        return update.getCallbackQuery().getFrom().getFirstName();
     }
 
     @Override
     public String getLastName() {
-        throw new NotImplementedException();
+        return update.getCallbackQuery().getFrom().getLastName();
     }
 
     @Override
