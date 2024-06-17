@@ -8,13 +8,12 @@ import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 
 import java.util.Optional;
 
-import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.msgMyK2Info;
-import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.msgNewcomer;
+import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.*;
 
-public class MyK2InfoAction implements Handler<UpdateWrapper, HandlerResult> {
+public class MyK2InfoPrivateAction implements Handler<UpdateWrapper, HandlerResult> {
     private final CallSignService callSignService;
 
-    public MyK2InfoAction(CallSignService callSignService) {
+    public MyK2InfoPrivateAction(CallSignService callSignService) {
         this.callSignService = callSignService;
     }
 
@@ -25,7 +24,7 @@ public class MyK2InfoAction implements Handler<UpdateWrapper, HandlerResult> {
         var tgId = payload.getUserId();
 
         Optional<CallSignModel> callSignModel = callSignService.getCallSign(tgId);
-        return callSignModel.map(signModel -> msgMyK2Info(chatId, threadId, signModel))
+        return callSignModel.map(signModel -> msgPrivateMyK2Info(chatId, threadId, signModel))
                 .orElseGet(() -> msgNewcomer(chatId, threadId, payload.getUsername()));
     }
 }

@@ -82,7 +82,7 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
         isWaitForQth = dialogCondition(dialogService, DialogState.EXPECT_QTH);
         isWaitForSearch = dialogCondition(dialogService, DialogState.EXPECT_SEARCH);
 
-        myK2InfoAction = new MyK2InfoAction(callSignService);
+        myK2InfoAction = new MyK2InfoGroupAction(callSignService);
         k2InfoAction = new K2InfoAction(callSignService);
         k2StatisticsAction = new K2StatisticsAction(callSignService);
         frequencyNotesAction = new FrequencyNotesAction();

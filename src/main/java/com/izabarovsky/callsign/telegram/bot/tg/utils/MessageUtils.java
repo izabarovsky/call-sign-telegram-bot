@@ -20,13 +20,25 @@ import static java.util.Objects.nonNull;
 
 public class MessageUtils {
 
-    public static HandlerResult msgMyK2Info(Long chatId, Integer threadId, CallSignModel callSignModel) {
+    public static HandlerResult msgGroupMyK2Info(Long chatId, Integer threadId, CallSignModel callSignModel) {
         String payload = parseMyCallSign(callSignModel);
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .messageThreadId(threadId)
                 .parseMode(ParseMode.HTML)
                 .replyMarkup(buildMainMenu())
+                .text(payload)
+                .build();
+        return new HandlerResult(msg);
+    }
+
+    public static HandlerResult msgPrivateMyK2Info(Long chatId, Integer threadId, CallSignModel callSignModel) {
+        String payload = parseMyCallSign(callSignModel);
+        var msg = SendMessage.builder()
+                .chatId(chatId)
+                .messageThreadId(threadId)
+                .parseMode(ParseMode.HTML)
+                .replyMarkup(buildEditInlineMenu())
                 .text(payload)
                 .build();
         return new HandlerResult(msg);
