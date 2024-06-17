@@ -41,7 +41,8 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
     private final Condition<UpdateWrapper> isWaitForQth;
     private final Condition<UpdateWrapper> isWaitForSearch;
 
-    private final Handler<UpdateWrapper, HandlerResult> myK2InfoAction;
+    private final Handler<UpdateWrapper, HandlerResult> myK2InfoGroupAction;
+    private final Handler<UpdateWrapper, HandlerResult> myK2InfoPrivateAction;
     private final Handler<UpdateWrapper, HandlerResult> k2InfoAction;
     private final Handler<UpdateWrapper, HandlerResult> k2StatisticsAction;
     private final Handler<UpdateWrapper, HandlerResult> frequencyNotesAction;
@@ -82,7 +83,8 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
         isWaitForQth = dialogCondition(dialogService, DialogState.EXPECT_QTH);
         isWaitForSearch = dialogCondition(dialogService, DialogState.EXPECT_SEARCH);
 
-        myK2InfoAction = new MyK2InfoGroupAction(callSignService);
+        myK2InfoGroupAction = new MyK2InfoGroupAction(callSignService);
+        myK2InfoPrivateAction = new MyK2InfoGroupAction(callSignService);
         k2InfoAction = new K2InfoAction(callSignService);
         k2StatisticsAction = new K2StatisticsAction(callSignService);
         frequencyNotesAction = new FrequencyNotesAction();
@@ -105,21 +107,21 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
     }
 
     private Handler<UpdateWrapper, HandlerResult> rootHandler() {
-        var commandNode = BranchHandler.builder()
+        var privateChatCommandChain = BranchHandler.builder()
                 .condition(isCommand)
                 .branchTrue(commandBranch())
                 .branchFalse(textBranch())
                 .build();
 
         var groupChatCommandChain = new ChainHandler(dummyHandler)
-                .setHandler(isMyK2Info, myK2InfoAction)
+                .setHandler(isMyK2Info, myK2InfoGroupAction)
                 .setHandler(isK2Info, k2InfoAction)
                 .setHandler(isStatistics, k2StatisticsAction)
                 .setHandler(isFrequencyNotes, frequencyNotesAction);
 
         return BranchHandler.builder()
                 .condition(isPersonalChat)
-                .branchTrue(commandNode)
+                .branchTrue(privateChatCommandChain)
                 .branchFalse(groupChatCommandChain)
                 .build();
     }
@@ -176,7 +178,7 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
 
         var existsUserChain = new ChainHandler(s -> msgOnAnyUnknown(s.getChatId()))
                 .setHandler(isEdit, startDialogEditAction)
-                .setHandler(isMyK2Info, myK2InfoAction)
+                .setHandler(isMyK2Info, myK2InfoPrivateAction)
                 .setHandler(isK2Info, k2InfoAction)
                 .setHandler(isSearch, startDialogSearchAction)
                 .setHandler(isGetAll, getAllCallSignsAction)

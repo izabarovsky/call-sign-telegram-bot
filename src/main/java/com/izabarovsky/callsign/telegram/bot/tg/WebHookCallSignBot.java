@@ -31,6 +31,7 @@ public class WebHookCallSignBot extends SpringWebhookBot {
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         if (update.hasCallbackQuery()) {
+            log.info("Callback update: {}", update);
             update.getCallbackQuery();
         } else {
             if (nonNull(update.getMessage()) && isGroupMember(update.getMessage().getFrom().getId())) {
