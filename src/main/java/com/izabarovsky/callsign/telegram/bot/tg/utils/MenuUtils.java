@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -34,13 +35,15 @@ public class MenuUtils {
     }
 
     public static ReplyKeyboardMarkup buildMainMenu() {
-        List<KeyboardRow> keyboardRows = keyboardRows(
-                Command.MY_K2_INFO,
-                Command.STATISTICS,
-                Command.SEARCH,
-                Command.GET_ALL,
-                Command.FREQUENCY_NOTES
-        );
+        List<KeyboardRow> keyboardRows = new ArrayList<>();
+        KeyboardRow myK2Row = newRow(Command.MY_K2_INFO);
+        KeyboardRow searchRow = newRow(Command.SEARCH);
+        KeyboardRow membersRow = newRow(Command.STATISTICS, Command.GET_ALL);
+        KeyboardRow notesRow = newRow(Command.FREQUENCY_NOTES);
+        keyboardRows.add(myK2Row);
+        keyboardRows.add(searchRow);
+        keyboardRows.add(membersRow);
+        keyboardRows.add(notesRow);
         return ReplyKeyboardMarkup.builder()
                 .keyboard(keyboardRows)
                 .selective(true)
@@ -55,7 +58,7 @@ public class MenuUtils {
         inlineKeyboardButton.setCallbackData(Command.EDIT.value());
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
         keyboardButtonsRow.add(inlineKeyboardButton);
-        List<List<InlineKeyboardButton>> rowList= new ArrayList<>();
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow);
         return InlineKeyboardMarkup.builder()
                 .keyboard(rowList)
@@ -78,6 +81,12 @@ public class MenuUtils {
             return row;
         };
         return Stream.of(commands).map(mapper).collect(Collectors.toList());
+    }
+
+    private static KeyboardRow newRow(Command... commands) {
+        KeyboardRow row = new KeyboardRow();
+        Stream.of(commands).forEach(s -> row.add(s.value()));
+        return row;
     }
 
 }
