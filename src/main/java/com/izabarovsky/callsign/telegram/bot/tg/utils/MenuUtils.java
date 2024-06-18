@@ -1,9 +1,12 @@
 package com.izabarovsky.callsign.telegram.bot.tg.utils;
 
 import com.izabarovsky.callsign.telegram.bot.tg.Command;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -35,7 +38,6 @@ public class MenuUtils {
                 Command.MY_K2_INFO,
                 Command.STATISTICS,
                 Command.SEARCH,
-                Command.EDIT,
                 Command.GET_ALL,
                 Command.FREQUENCY_NOTES
         );
@@ -44,6 +46,19 @@ public class MenuUtils {
                 .selective(true)
                 .resizeKeyboard(true)
                 .oneTimeKeyboard(false)
+                .build();
+    }
+
+    public static InlineKeyboardMarkup buildEditInlineMenu() {
+        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+        inlineKeyboardButton.setText("Редагувати");
+        inlineKeyboardButton.setCallbackData(Command.EDIT.value());
+        List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
+        keyboardButtonsRow.add(inlineKeyboardButton);
+        List<List<InlineKeyboardButton>> rowList= new ArrayList<>();
+        rowList.add(keyboardButtonsRow);
+        return InlineKeyboardMarkup.builder()
+                .keyboard(rowList)
                 .build();
     }
 
