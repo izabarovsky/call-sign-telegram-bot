@@ -34,7 +34,7 @@ public class WebHookCallSignBot extends SpringWebhookBot {
         UpdateWrapper updateWrapper = update.hasCallbackQuery() ? new CallbackUpdate(update) :
                 update.hasMessage() ? new MessageUpdate(update) : null;
         if (nonNull(updateWrapper) && nonNull(updateWrapper.getText()) && isGroupMember(updateWrapper.getUserId())) {
-            var result = handler.handle(new MessageUpdate(update));
+            var result = handler.handle(updateWrapper);
             return handleResult(result);
         }
         return null;
