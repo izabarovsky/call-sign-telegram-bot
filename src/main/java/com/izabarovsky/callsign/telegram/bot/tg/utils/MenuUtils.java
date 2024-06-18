@@ -38,7 +38,6 @@ public class MenuUtils {
                 Command.MY_K2_INFO,
                 Command.STATISTICS,
                 Command.SEARCH,
-                Command.EDIT,
                 Command.GET_ALL,
                 Command.FREQUENCY_NOTES
         );
