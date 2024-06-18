@@ -31,16 +31,11 @@ public class WebHookCallSignBot extends SpringWebhookBot {
 
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
-        if (update.hasCallbackQuery()) {
-            log.info("Callback update: {}", update);
-            var temp = new CallbackUpdate(update);
-            log.info("Params: private {} data {} ", temp.isPrivate(), temp.getText());
-            update.getCallbackQuery();
-        } else {
-            if (nonNull(update.getMessage()) && isGroupMember(update.getMessage().getFrom().getId())) {
-                var result = handler.handle(new MessageUpdate(update));
-                return handleResult(result);
-            }
+        UpdateWrapper updateWrapper = update.hasCallbackQuery() ? new CallbackUpdate(update) :
+                update.hasMessage() ? new MessageUpdate(update) : null;
+        if (nonNull(updateWrapper) && nonNull(updateWrapper.getText()) && isGroupMember(updateWrapper.getUserId())) {
+            var result = handler.handle(new MessageUpdate(update));
+            return handleResult(result);
         }
         return null;
     }
