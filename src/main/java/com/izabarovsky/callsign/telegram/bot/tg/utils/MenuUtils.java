@@ -7,7 +7,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -17,21 +16,11 @@ public class MenuUtils {
 
     public static ReplyKeyboardMarkup buildSkipOrCancelMenu() {
         List<KeyboardRow> keyboardRows = keyboardRows(Command.SKIP, Command.CANCEL);
-        return ReplyKeyboardMarkup.builder()
-                .keyboard(keyboardRows)
-                .selective(true)
-                .resizeKeyboard(true)
-                .oneTimeKeyboard(false)
-                .build();
+        return newReplyKeyboardMarkup(keyboardRows);
     }
 
     public static ReplyKeyboardMarkup buildCancelMenu() {
-        return ReplyKeyboardMarkup.builder()
-                .keyboard(keyboardRows(Command.CANCEL))
-                .selective(true)
-                .resizeKeyboard(true)
-                .oneTimeKeyboard(false)
-                .build();
+        return newReplyKeyboardMarkup(keyboardRows(Command.CANCEL));
     }
 
     public static ReplyKeyboardMarkup buildMainMenu() {
@@ -44,12 +33,7 @@ public class MenuUtils {
         keyboardRows.add(searchRow);
         keyboardRows.add(membersRow);
         keyboardRows.add(notesRow);
-        return ReplyKeyboardMarkup.builder()
-                .keyboard(keyboardRows)
-                .selective(true)
-                .resizeKeyboard(true)
-                .oneTimeKeyboard(false)
-                .build();
+        return newReplyKeyboardMarkup(keyboardRows);
     }
 
     public static InlineKeyboardMarkup buildEditInlineMenu() {
@@ -66,12 +50,7 @@ public class MenuUtils {
     }
 
     public static ReplyKeyboardMarkup buildCreateMenu() {
-        return ReplyKeyboardMarkup.builder()
-                .keyboard(keyboardRows(Command.CREATE))
-                .selective(true)
-                .resizeKeyboard(true)
-                .oneTimeKeyboard(false)
-                .build();
+        return newReplyKeyboardMarkup(keyboardRows(Command.CREATE));
     }
 
     private static List<KeyboardRow> keyboardRows(Command... commands) {
@@ -87,6 +66,15 @@ public class MenuUtils {
         KeyboardRow row = new KeyboardRow();
         Stream.of(commands).forEach(s -> row.add(s.value()));
         return row;
+    }
+
+    private static ReplyKeyboardMarkup newReplyKeyboardMarkup(List<KeyboardRow> rows) {
+        return ReplyKeyboardMarkup.builder()
+                .keyboard(rows)
+                .selective(true)
+                .resizeKeyboard(true)
+                .oneTimeKeyboard(false)
+                .build();
     }
 
 }
