@@ -49,7 +49,8 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
     private final Handler<UpdateWrapper, HandlerResult> myK2InfoPrivateAction;
     private final Handler<UpdateWrapper, HandlerResult> k2InfoAction;
     private final Handler<UpdateWrapper, HandlerResult> k2StatisticsAction;
-    private final Handler<UpdateWrapper, HandlerResult> repeatersAction;
+    private final Handler<UpdateWrapper, HandlerResult> repeatersPrivateAction;
+    private final Handler<UpdateWrapper, HandlerResult> repeatersGroupAction;
     private final Handler<UpdateWrapper, HandlerResult> repeatersOfficialAction;
     private final Handler<UpdateWrapper, HandlerResult> repeatersNonOfficialAction;
     private final Handler<UpdateWrapper, HandlerResult> repeatersEcholinkAction;
@@ -97,7 +98,8 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
         myK2InfoPrivateAction = new MyK2InfoPrivateAction(callSignService);
         k2InfoAction = new K2InfoAction(callSignService);
         k2StatisticsAction = new K2StatisticsAction(callSignService);
-        repeatersAction = new SimpleMessageAction(MessageUtils::msgRepeaters);
+        repeatersPrivateAction = new SimpleMessageAction(MessageUtils::msgPrivateRepeaters);
+        repeatersGroupAction = new SimpleMessageAction(MessageUtils::msgGroupRepeaters);
         repeatersOfficialAction = new SimpleMessageAction(MessageUtils::msgRepeatersOfficial);
         repeatersNonOfficialAction = new SimpleMessageAction(MessageUtils::msgRepeatersNonOfficial);
         repeatersEcholinkAction = new SimpleMessageAction(MessageUtils::msgRepeatersEcholink);
@@ -130,7 +132,7 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
                 .setHandler(isMyK2Info, myK2InfoGroupAction)
                 .setHandler(isK2Info, k2InfoAction)
                 .setHandler(isStatistics, k2StatisticsAction)
-                .setHandler(isRepeaters, repeatersAction)
+                .setHandler(isRepeaters, repeatersGroupAction)
                 .setHandler(isRepeatersOfficial, repeatersOfficialAction)
                 .setHandler(isRepeatersNonOfficial, repeatersNonOfficialAction)
                 .setHandler(isRepeatersEcholink, repeatersEcholinkAction);
@@ -199,7 +201,7 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
                 .setHandler(isSearch, startDialogSearchAction)
                 .setHandler(isGetAll, getAllCallSignsAction)
                 .setHandler(isStatistics, k2StatisticsAction)
-                .setHandler(isRepeaters, repeatersAction)
+                .setHandler(isRepeaters, repeatersPrivateAction)
                 .setHandler(isRepeatersOfficial, repeatersOfficialAction)
                 .setHandler(isRepeatersNonOfficial, repeatersNonOfficialAction)
                 .setHandler(isRepeatersEcholink, repeatersEcholinkAction);

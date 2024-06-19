@@ -119,8 +119,12 @@ public class MessageUtils {
                 .build();
     }
 
-    public static HandlerResult msgRepeaters(Long chatId, Integer threadId) {
-        return newMessage(chatId, threadId, textRepeaters(), buildRepeatersInlineMenu());
+    public static HandlerResult msgPrivateRepeaters(Long chatId, Integer threadId) {
+        return newMessage(chatId, threadId, textRepeatersPrivate(), buildRepeatersInlineMenu());
+    }
+
+    public static HandlerResult msgGroupRepeaters(Long chatId, Integer threadId) {
+        return newMessage(chatId, threadId, textRepeatersGroup(), null);
     }
 
     public static HandlerResult msgRepeatersNonOfficial(Long chatId, Integer threadId) {

@@ -90,8 +90,17 @@ public class TextUtils {
         );
     }
 
-    public static String textRepeaters() {
+    public static String textRepeatersPrivate() {
         return "Репітери Києва";
+    }
+
+    public static String textRepeatersGroup() {
+        return String.format("""
+                Репітери Києва
+                Офіційні -> %s
+                Неофіційні -> %s
+                Ехолінк -> %s
+                """, Command.OFFICIAL, Command.NONOFFICIAL, Command.ECHOLINK);
     }
 
     public static String textRepeatersNonOfficial() {
