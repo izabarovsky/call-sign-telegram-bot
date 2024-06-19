@@ -16,37 +16,24 @@ public class MenuUtils {
 
     public static ReplyKeyboardMarkup buildSkipOrCancelMenu() {
         List<KeyboardRow> keyboardRows = keyboardRows(Command.SKIP, Command.CANCEL);
-        return ReplyKeyboardMarkup.builder()
-                .keyboard(keyboardRows)
-                .selective(true)
-                .resizeKeyboard(true)
-                .oneTimeKeyboard(false)
-                .build();
+        return newReplyKeyboardMarkup(keyboardRows);
     }
 
     public static ReplyKeyboardMarkup buildCancelMenu() {
-        return ReplyKeyboardMarkup.builder()
-                .keyboard(keyboardRows(Command.CANCEL))
-                .selective(true)
-                .resizeKeyboard(true)
-                .oneTimeKeyboard(false)
-                .build();
+        return newReplyKeyboardMarkup(keyboardRows(Command.CANCEL));
     }
 
     public static ReplyKeyboardMarkup buildMainMenu() {
-        List<KeyboardRow> keyboardRows = keyboardRows(
-                Command.MY_K2_INFO,
-                Command.STATISTICS,
-                Command.SEARCH,
-                Command.GET_ALL,
-                Command.FREQUENCY_NOTES
-        );
-        return ReplyKeyboardMarkup.builder()
-                .keyboard(keyboardRows)
-                .selective(true)
-                .resizeKeyboard(true)
-                .oneTimeKeyboard(false)
-                .build();
+        List<KeyboardRow> keyboardRows = new ArrayList<>();
+        KeyboardRow myK2Row = newRow(Command.MY_K2_INFO);
+        KeyboardRow searchRow = newRow(Command.SEARCH);
+        KeyboardRow membersRow = newRow(Command.STATISTICS, Command.GET_ALL);
+        KeyboardRow notesRow = newRow(Command.FREQUENCY_NOTES);
+        keyboardRows.add(myK2Row);
+        keyboardRows.add(searchRow);
+        keyboardRows.add(membersRow);
+        keyboardRows.add(notesRow);
+        return newReplyKeyboardMarkup(keyboardRows);
     }
 
     public static InlineKeyboardMarkup buildEditInlineMenu() {
@@ -55,7 +42,7 @@ public class MenuUtils {
         inlineKeyboardButton.setCallbackData(Command.EDIT.value());
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
         keyboardButtonsRow.add(inlineKeyboardButton);
-        List<List<InlineKeyboardButton>> rowList= new ArrayList<>();
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow);
         return InlineKeyboardMarkup.builder()
                 .keyboard(rowList)
@@ -63,12 +50,7 @@ public class MenuUtils {
     }
 
     public static ReplyKeyboardMarkup buildCreateMenu() {
-        return ReplyKeyboardMarkup.builder()
-                .keyboard(keyboardRows(Command.CREATE))
-                .selective(true)
-                .resizeKeyboard(true)
-                .oneTimeKeyboard(false)
-                .build();
+        return newReplyKeyboardMarkup(keyboardRows(Command.CREATE));
     }
 
     private static List<KeyboardRow> keyboardRows(Command... commands) {
@@ -78,6 +60,21 @@ public class MenuUtils {
             return row;
         };
         return Stream.of(commands).map(mapper).collect(Collectors.toList());
+    }
+
+    private static KeyboardRow newRow(Command... commands) {
+        KeyboardRow row = new KeyboardRow();
+        Stream.of(commands).forEach(s -> row.add(s.value()));
+        return row;
+    }
+
+    private static ReplyKeyboardMarkup newReplyKeyboardMarkup(List<KeyboardRow> rows) {
+        return ReplyKeyboardMarkup.builder()
+                .keyboard(rows)
+                .selective(true)
+                .resizeKeyboard(true)
+                .oneTimeKeyboard(false)
+                .build();
     }
 
 }
