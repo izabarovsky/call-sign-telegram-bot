@@ -17,7 +17,6 @@ public enum Command {
     ECHOLINK("/Echolink");
 
 
-
     private final String value;
 
     Command(String value) {

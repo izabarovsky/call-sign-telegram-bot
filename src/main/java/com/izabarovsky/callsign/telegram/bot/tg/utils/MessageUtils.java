@@ -209,13 +209,43 @@ public class MessageUtils {
                 .build();
     }
 
-    public static HandlerResult msgFrequencyNotes(Long chatId, Integer threadId) {
+    public static HandlerResult msgRepeaters(Long chatId, Integer threadId) {
         var msg = SendMessage.builder()
                 .chatId(chatId)
                 .messageThreadId(threadId)
                 .parseMode(ParseMode.HTML)
-                .replyMarkup(buildMainMenu())
-                .text(TextUtils.textFrequencyNotes())
+                .replyMarkup(buildRepeatersInlineMenu())
+                .text(TextUtils.textRepeaters())
+                .build();
+        return new HandlerResult(msg);
+    }
+
+    public static HandlerResult msgRepeatersNonOfficial(Long chatId, Integer threadId) {
+        var msg = SendMessage.builder()
+                .chatId(chatId)
+                .messageThreadId(threadId)
+                .parseMode(ParseMode.HTML)
+                .text(TextUtils.textRepeatersNonOfficial())
+                .build();
+        return new HandlerResult(msg);
+    }
+
+    public static HandlerResult msgRepeatersOfficial(Long chatId, Integer threadId) {
+        var msg = SendMessage.builder()
+                .chatId(chatId)
+                .messageThreadId(threadId)
+                .parseMode(ParseMode.HTML)
+                .text(TextUtils.textRepeatersOfficial())
+                .build();
+        return new HandlerResult(msg);
+    }
+
+    public static HandlerResult msgRepeatersEcholink(Long chatId, Integer threadId) {
+        var msg = SendMessage.builder()
+                .chatId(chatId)
+                .messageThreadId(threadId)
+                .parseMode(ParseMode.HTML)
+                .text(TextUtils.textRepeatersEcholink())
                 .build();
         return new HandlerResult(msg);
     }

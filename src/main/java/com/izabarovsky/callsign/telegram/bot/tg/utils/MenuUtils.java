@@ -49,6 +49,21 @@ public class MenuUtils {
                 .build();
     }
 
+    public static InlineKeyboardMarkup buildRepeatersInlineMenu() {
+        InlineKeyboardButton buttonOfficial = newInlineButton(Command.OFFICIAL, "Офіційні");
+        InlineKeyboardButton buttonNonOfficial = newInlineButton(Command.NONOFFICIAL, "Неофіційні");
+        InlineKeyboardButton buttonEcholink = newInlineButton(Command.ECHOLINK, "Ехолінк");
+        List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
+        keyboardButtonsRow.add(buttonOfficial);
+        keyboardButtonsRow.add(buttonNonOfficial);
+        keyboardButtonsRow.add(buttonEcholink);
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
+        rowList.add(keyboardButtonsRow);
+        return InlineKeyboardMarkup.builder()
+                .keyboard(rowList)
+                .build();
+    }
+
     public static ReplyKeyboardMarkup buildCreateMenu() {
         return newReplyKeyboardMarkup(keyboardRows(Command.CREATE));
     }
@@ -75,6 +90,13 @@ public class MenuUtils {
                 .resizeKeyboard(true)
                 .oneTimeKeyboard(false)
                 .build();
+    }
+
+    private static InlineKeyboardButton newInlineButton(Command command, String text) {
+        InlineKeyboardButton button = new InlineKeyboardButton();
+        button.setText(text);
+        button.setCallbackData(command.value());
+        return button;
     }
 
 }
