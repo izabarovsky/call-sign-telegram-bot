@@ -37,6 +37,7 @@ public class WebHookCallSignBot extends SpringWebhookBot {
             var result = handler.handle(updateWrapper);
             return handleResult(result);
         }
+        log.info("Unhandled update: {}", update);
         return null;
     }
 
