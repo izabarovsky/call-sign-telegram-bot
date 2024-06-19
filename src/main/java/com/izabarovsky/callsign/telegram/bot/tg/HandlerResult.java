@@ -2,6 +2,7 @@ package com.izabarovsky.callsign.telegram.bot.tg;
 
 import lombok.Data;
 import org.telegram.telegrambots.bots.DefaultAbsSender;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.util.function.Consumer;
@@ -10,6 +11,7 @@ import java.util.function.Consumer;
 public class HandlerResult {
 
     private SendMessage responseMsg;
+    private AnswerCallbackQuery answerCallbackQuery;
     private Consumer<DefaultAbsSender> consumer;
 
     public HandlerResult(SendMessage sendMessage) {
