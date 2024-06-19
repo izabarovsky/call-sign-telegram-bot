@@ -22,8 +22,7 @@ public class CallbackUpdate implements UpdateWrapper {
 
     @Override
     public Integer getThreadId() {
-        log.info("Callback: {}", this.update);
-        throw new NotImplementedException();
+        return null;
     }
 
     @Override
