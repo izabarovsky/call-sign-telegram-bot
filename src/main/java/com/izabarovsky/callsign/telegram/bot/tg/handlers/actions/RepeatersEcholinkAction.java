@@ -6,7 +6,7 @@ import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 
 import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.msgFrequencyNotes;
 
-public class FrequencyNotesAction implements Handler<UpdateWrapper, HandlerResult> {
+public class RepeatersEcholinkAction implements Handler<UpdateWrapper, HandlerResult> {
 
     @Override
     public HandlerResult handle(UpdateWrapper payload) {

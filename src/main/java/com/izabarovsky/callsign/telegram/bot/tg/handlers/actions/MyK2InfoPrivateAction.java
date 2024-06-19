@@ -8,7 +8,8 @@ import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
 
 import java.util.Optional;
 
-import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.*;
+import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.msgNewcomer;
+import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.msgPrivateMyK2Info;
 
 public class MyK2InfoPrivateAction implements Handler<UpdateWrapper, HandlerResult> {
     private final CallSignService callSignService;
