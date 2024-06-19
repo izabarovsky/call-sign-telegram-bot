@@ -98,9 +98,9 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
         k2InfoAction = new K2InfoAction(callSignService);
         k2StatisticsAction = new K2StatisticsAction(callSignService);
         repeatersAction = new SimpleMessageAction(MessageUtils::msgRepeaters);
-        repeatersOfficialAction = new SimpleAnswerAction(MessageUtils::answerRepeatersOfficial);
-        repeatersNonOfficialAction = new SimpleAnswerAction(MessageUtils::answerRepeatersNonOfficial);
-        repeatersEcholinkAction = new SimpleAnswerAction(MessageUtils::answerRepeatersEcholink);
+        repeatersOfficialAction = new SimpleMessageAction(MessageUtils::msgRepeatersOfficial);
+        repeatersNonOfficialAction = new SimpleMessageAction(MessageUtils::msgRepeatersNonOfficial);
+        repeatersEcholinkAction = new SimpleMessageAction(MessageUtils::msgRepeatersEcholink);
         nextStateAction = new NextStateAction(dialogService);
         cleanStateAction = new CleanStateAction(dialogService);
         saveK2CallSignAction = new SaveK2CallSignAction(callSignService, dialogService);
@@ -115,6 +115,7 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
     }
 
     public HandlerResult handle(UpdateWrapper update) {
+        log.info("{}", update);
         return rootHandler().handle(update);
     }
 

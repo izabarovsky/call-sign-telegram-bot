@@ -3,7 +3,6 @@ package com.izabarovsky.callsign.telegram.bot.tg.utils;
 import com.izabarovsky.callsign.telegram.bot.service.CallSignModel;
 import com.izabarovsky.callsign.telegram.bot.tg.HandlerResult;
 import org.apache.commons.io.IOUtils;
-import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -122,27 +121,6 @@ public class MessageUtils {
 
     public static HandlerResult msgRepeaters(Long chatId, Integer threadId) {
         return newMessage(chatId, threadId, textRepeaters(), buildRepeatersInlineMenu());
-    }
-
-    public static AnswerCallbackQuery answerRepeatersNonOfficial(String callBackId) {
-        return AnswerCallbackQuery.builder()
-                .callbackQueryId(callBackId)
-                .text(textRepeatersNonOfficial())
-                .build();
-    }
-
-    public static AnswerCallbackQuery answerRepeatersOfficial(String callBackId) {
-        return AnswerCallbackQuery.builder()
-                .callbackQueryId(callBackId)
-                .text(textRepeatersOfficial())
-                .build();
-    }
-
-    public static AnswerCallbackQuery answerRepeatersEcholink(String callBackId) {
-        return AnswerCallbackQuery.builder()
-                .callbackQueryId(callBackId)
-                .text(textRepeatersEcholink())
-                .build();
     }
 
     public static HandlerResult msgRepeatersNonOfficial(Long chatId, Integer threadId) {

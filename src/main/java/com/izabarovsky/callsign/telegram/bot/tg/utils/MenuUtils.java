@@ -7,7 +7,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -54,13 +53,14 @@ public class MenuUtils {
         InlineKeyboardButton buttonOfficial = newInlineButton(Command.OFFICIAL, "Офіційні");
         InlineKeyboardButton buttonNonOfficial = newInlineButton(Command.NONOFFICIAL, "Неофіційні");
         InlineKeyboardButton buttonEcholink = newInlineButton(Command.ECHOLINK, "Ехолінк");
-
-        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-        rows.add(Collections.singletonList(buttonOfficial));
-        rows.add(Collections.singletonList(buttonNonOfficial));
-        rows.add(Collections.singletonList(buttonEcholink));
+        List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
+        keyboardButtonsRow.add(buttonOfficial);
+        keyboardButtonsRow.add(buttonNonOfficial);
+        keyboardButtonsRow.add(buttonEcholink);
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
+        rowList.add(keyboardButtonsRow);
         return InlineKeyboardMarkup.builder()
-                .keyboard(rows)
+                .keyboard(rowList)
                 .build();
     }
 
