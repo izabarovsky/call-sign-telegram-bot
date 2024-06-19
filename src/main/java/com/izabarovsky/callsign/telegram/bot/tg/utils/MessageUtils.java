@@ -177,6 +177,7 @@ public class MessageUtils {
                 .chatId(chatId)
                 .messageThreadId(threadId)
                 .parseMode(ParseMode.HTML)
+                .replyMarkup(replyMarkup)
                 .text(text)
                 .build();
         return new HandlerResult(msg);
