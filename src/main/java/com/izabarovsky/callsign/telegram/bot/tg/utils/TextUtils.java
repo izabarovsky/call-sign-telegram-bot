@@ -100,7 +100,7 @@ public class TextUtils {
                 Офіційні -> %s
                 Неофіційні -> %s
                 Ехолінк -> %s
-                """, Command.OFFICIAL, Command.NONOFFICIAL, Command.ECHOLINK);
+                """, Command.OFFICIAL.value(), Command.NONOFFICIAL.value(), Command.ECHOLINK.value());
     }
 
     public static String textRepeatersNonOfficial() {
