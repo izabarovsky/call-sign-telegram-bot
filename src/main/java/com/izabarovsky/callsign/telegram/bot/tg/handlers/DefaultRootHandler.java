@@ -66,7 +66,7 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
         isMyK2Info = cmdCondition(Command.MY_K2_INFO);
         isK2Info = cmdCondition(Command.K2_INFO);
         isStatistics = cmdCondition(Command.STATISTICS);
-        isFrequencyNotes = cmdCondition(Command.FREQUENCY_NOTES);
+        isFrequencyNotes = cmdCondition(Command.REPEATERS);
         isCommand = new IsCommand();
         isPersonalChat = new IsPersonalChat();
         isSession = new IsSession(dialogService);

@@ -28,7 +28,7 @@ public class MenuUtils {
         KeyboardRow myK2Row = newRow(Command.MY_K2_INFO);
         KeyboardRow searchRow = newRow(Command.SEARCH);
         KeyboardRow membersRow = newRow(Command.STATISTICS, Command.GET_ALL);
-        KeyboardRow notesRow = newRow(Command.FREQUENCY_NOTES);
+        KeyboardRow notesRow = newRow(Command.REPEATERS);
         keyboardRows.add(myK2Row);
         keyboardRows.add(searchRow);
         keyboardRows.add(membersRow);
