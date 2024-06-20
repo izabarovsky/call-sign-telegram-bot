@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static java.util.Objects.nonNull;
+
 @Slf4j
 @Component
 public class CallSignService {
@@ -64,6 +66,20 @@ public class CallSignService {
         Optional<CallSignEntity> entity = callSignRepository.findByTgId(callSignModel.getTgId());
         entity.ifPresent(callSignEntity -> temp.setId(callSignEntity.getId()));
         return callSignRepository.save(temp).getId();
+    }
+
+    public StatisticsModel getStatistics() {
+        List<CallSignEntity> list = callSignRepository.findAll();
+        long total = list.size();
+        long official = list.stream().filter(s -> nonNull(s.getOfficialCallSign())).count();
+        long dmr = list.stream().filter(s -> nonNull(s.getDmrId())).count();
+        long nonOfficial = total - official;
+        return StatisticsModel.builder()
+                .total(total)
+                .official(official)
+                .nonOfficial(nonOfficial)
+                .dmr(dmr)
+                .build();
     }
 
 }

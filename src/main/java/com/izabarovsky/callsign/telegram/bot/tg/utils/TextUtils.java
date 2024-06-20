@@ -1,6 +1,7 @@
 package com.izabarovsky.callsign.telegram.bot.tg.utils;
 
 import com.izabarovsky.callsign.telegram.bot.service.CallSignModel;
+import com.izabarovsky.callsign.telegram.bot.service.StatisticsModel;
 import com.izabarovsky.callsign.telegram.bot.tg.Command;
 
 import java.util.Objects;
@@ -76,17 +77,17 @@ public class TextUtils {
                 """, username);
     }
 
-    public static String textStatistics(long total, long official, long nonOfficial, long dmr) {
+    public static String textStatistics(StatisticsModel statisticsModel) {
         return String.format("""
                         <b>Зареєстровано через бот</b>: %s
                         <b>Мають офіційний позивний</b>: %s
                         <b>Не мають офіційного</b>: %s
                         <b>Мають DMR_ID</b>: %s
                         """,
-                total,
-                official,
-                nonOfficial,
-                dmr
+                statisticsModel.getTotal(),
+                statisticsModel.getOfficial(),
+                statisticsModel.getNonOfficial(),
+                statisticsModel.getDmr()
         );
     }
 
@@ -96,12 +97,12 @@ public class TextUtils {
 
     public static String textRepeatersGroup() {
         return String.format("""
-                Репітери Києва
-                Офіційні -> %s
-                Неофіційні -> %s
-                Папуги -> %s
-                Ехолінк -> %s
-                """,
+                        Репітери Києва
+                        Офіційні -> %s
+                        Неофіційні -> %s
+                        Папуги -> %s
+                        Ехолінк -> %s
+                        """,
                 Command.OFFICIAL.value(),
                 Command.NONOFFICIAL.value(),
                 Command.PARROTS.value(),
@@ -171,16 +172,17 @@ public class TextUtils {
                 RX/TX 436.700
                 CTSS: 71.9Hz
                 QTH - Бровари
-                
+                                
                 <b>WhiteChurch Parrot</b>
                 RX/TX 145.400
                 QTH - Біла Церква
-                
+                                
                 <b>Parrot R92</b>
                 RX/TX 439.200
                 CTSS: 88.5
                 """;
     }
+
     public static String textRepeatersEcholink() {
         return """
                 <b>Echolink</b>

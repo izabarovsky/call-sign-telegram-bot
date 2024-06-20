@@ -25,28 +25,26 @@ public class MenuUtils {
     }
 
     public static ReplyKeyboardMarkup buildMainMenu() {
-        List<KeyboardRow> keyboardRows = new ArrayList<>();
-        KeyboardRow myK2Row = newRow(Command.MY_K2_INFO);
-        KeyboardRow searchRow = newRow(Command.SEARCH);
-        KeyboardRow membersRow = newRow(Command.STATISTICS, Command.GET_ALL);
-        KeyboardRow notesRow = newRow(Command.REPEATERS);
-        keyboardRows.add(myK2Row);
-        keyboardRows.add(searchRow);
-        keyboardRows.add(membersRow);
-        keyboardRows.add(notesRow);
+        List<KeyboardRow> keyboardRows = keyboardRows(Command.MY_K2_INFO,
+                Command.SEARCH, Command.STATISTICS, Command.REPEATERS);
         return newReplyKeyboardMarkup(keyboardRows);
     }
 
     public static InlineKeyboardMarkup buildEditInlineMenu() {
-        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
-        inlineKeyboardButton.setText("Редагувати");
-        inlineKeyboardButton.setCallbackData(Command.EDIT.value());
+        InlineKeyboardButton inlineKeyboardButton = newInlineButton(Command.EDIT, "Редагувати");
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
         keyboardButtonsRow.add(inlineKeyboardButton);
-        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        rowList.add(keyboardButtonsRow);
         return InlineKeyboardMarkup.builder()
-                .keyboard(rowList)
+                .keyboard(Collections.singletonList(keyboardButtonsRow))
+                .build();
+    }
+
+    public static InlineKeyboardMarkup buildGetAllInlineMenu() {
+        InlineKeyboardButton inlineKeyboardButton = newInlineButton(Command.GET_ALL, "Завантажити CSV");
+        List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
+        keyboardButtonsRow.add(inlineKeyboardButton);
+        return InlineKeyboardMarkup.builder()
+                .keyboard(Collections.singletonList(keyboardButtonsRow))
                 .build();
     }
 

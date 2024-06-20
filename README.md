@@ -7,7 +7,7 @@ Main functions:
  - save data to storage
  - implement search 
 
-# Stack
+### Stack
 
 Simple project based on **java17**, **maven**, **spring-boot**  
 Data storage is **postgres**  
@@ -43,3 +43,13 @@ Clean schema
 Migrate  
 `mvn flyway:migrate -Dflyway.url=jdbc:postgresql://localhost:5432/postgres -Dflyway.user=postgres -Dflyway.password=postgres`  
 
+### Some sql queries  
+
+Get registration statistics by date  
+
+```
+SELECT DATE(creation_timestamp) as date, count(*) AS members
+FROM callsign
+GROUP BY date
+ORDER BY date;
+```
