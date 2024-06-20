@@ -38,15 +38,20 @@ public class MenuUtils {
     }
 
     public static InlineKeyboardMarkup buildEditInlineMenu() {
-        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
-        inlineKeyboardButton.setText("Редагувати");
-        inlineKeyboardButton.setCallbackData(Command.EDIT.value());
+        InlineKeyboardButton inlineKeyboardButton = newInlineButton(Command.EDIT, "Редагувати");
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
         keyboardButtonsRow.add(inlineKeyboardButton);
-        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        rowList.add(keyboardButtonsRow);
         return InlineKeyboardMarkup.builder()
-                .keyboard(rowList)
+                .keyboard(Collections.singletonList(keyboardButtonsRow))
+                .build();
+    }
+
+    public static InlineKeyboardMarkup buildGetAllInlineMenu() {
+        InlineKeyboardButton inlineKeyboardButton = newInlineButton(Command.GET_ALL, "Завантажити CSV");
+        List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
+        keyboardButtonsRow.add(inlineKeyboardButton);
+        return InlineKeyboardMarkup.builder()
+                .keyboard(Collections.singletonList(keyboardButtonsRow))
                 .build();
     }
 

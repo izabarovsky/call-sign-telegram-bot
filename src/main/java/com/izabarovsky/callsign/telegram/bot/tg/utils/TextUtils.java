@@ -96,12 +96,12 @@ public class TextUtils {
 
     public static String textRepeatersGroup() {
         return String.format("""
-                Репітери Києва
-                Офіційні -> %s
-                Неофіційні -> %s
-                Папуги -> %s
-                Ехолінк -> %s
-                """,
+                        Репітери Києва
+                        Офіційні -> %s
+                        Неофіційні -> %s
+                        Папуги -> %s
+                        Ехолінк -> %s
+                        """,
                 Command.OFFICIAL.value(),
                 Command.NONOFFICIAL.value(),
                 Command.PARROTS.value(),
@@ -171,16 +171,17 @@ public class TextUtils {
                 RX/TX 436.700
                 CTSS: 71.9Hz
                 QTH - Бровари
-                
+                                
                 <b>WhiteChurch Parrot</b>
                 RX/TX 145.400
                 QTH - Біла Церква
-                
+                                
                 <b>Parrot R92</b>
                 RX/TX 439.200
                 CTSS: 88.5
                 """;
     }
+
     public static String textRepeatersEcholink() {
         return """
                 <b>Echolink</b>

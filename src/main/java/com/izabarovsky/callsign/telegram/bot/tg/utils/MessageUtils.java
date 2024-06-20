@@ -36,12 +36,20 @@ public class MessageUtils {
         return newMessage(chatId, threadId, payload, buildMainMenu());
     }
 
-    public static HandlerResult msgStatistics(Long chatId, Integer threadId, List<CallSignModel> list) {
+    public static HandlerResult msgPrivateStatistics(Long chatId, Integer threadId, List<CallSignModel> list) {
         long total = list.size();
         long official = list.stream().filter(s -> nonNull(s.getOfficialCallSign())).count();
         long dmr = list.stream().filter(s -> nonNull(s.getDmrId())).count();
         long nonOfficial = total - official;
-        return newMessage(chatId, threadId, textStatistics(total, official, nonOfficial, dmr), buildMainMenu());
+        return newMessage(chatId, threadId, textStatistics(total, official, nonOfficial, dmr), buildGetAllInlineMenu());
+    }
+
+    public static HandlerResult msgGroupStatistics(Long chatId, Integer threadId, List<CallSignModel> list) {
+        long total = list.size();
+        long official = list.stream().filter(s -> nonNull(s.getOfficialCallSign())).count();
+        long dmr = list.stream().filter(s -> nonNull(s.getDmrId())).count();
+        long nonOfficial = total - official;
+        return newMessage(chatId, threadId, textStatistics(total, official, nonOfficial, dmr), null);
     }
 
     public static HandlerResult msgNewcomer(Long chatId, Integer threadId, String userName) {
