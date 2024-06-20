@@ -25,15 +25,8 @@ public class MenuUtils {
     }
 
     public static ReplyKeyboardMarkup buildMainMenu() {
-        List<KeyboardRow> keyboardRows = new ArrayList<>();
-        KeyboardRow myK2Row = newRow(Command.MY_K2_INFO);
-        KeyboardRow searchRow = newRow(Command.SEARCH);
-        KeyboardRow membersRow = newRow(Command.STATISTICS, Command.GET_ALL);
-        KeyboardRow notesRow = newRow(Command.REPEATERS);
-        keyboardRows.add(myK2Row);
-        keyboardRows.add(searchRow);
-        keyboardRows.add(membersRow);
-        keyboardRows.add(notesRow);
+        List<KeyboardRow> keyboardRows = keyboardRows(Command.MY_K2_INFO,
+                Command.SEARCH, Command.STATISTICS, Command.REPEATERS);
         return newReplyKeyboardMarkup(keyboardRows);
     }
 
