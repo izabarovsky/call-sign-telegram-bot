@@ -53,10 +53,12 @@ public class MenuUtils {
     public static InlineKeyboardMarkup buildRepeatersInlineMenu() {
         InlineKeyboardButton buttonOfficial = newInlineButton(Command.OFFICIAL, "Офіційні");
         InlineKeyboardButton buttonNonOfficial = newInlineButton(Command.NONOFFICIAL, "Неофіційні");
+        InlineKeyboardButton buttonParrots = newInlineButton(Command.PARROTS, "Папуги");
         InlineKeyboardButton buttonEcholink = newInlineButton(Command.ECHOLINK, "Ехолінк");
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         rows.add(Collections.singletonList(buttonOfficial));
         rows.add(Collections.singletonList(buttonNonOfficial));
+        rows.add(Collections.singletonList(buttonParrots));
         rows.add(Collections.singletonList(buttonEcholink));
         return InlineKeyboardMarkup.builder()
                 .keyboard(rows)

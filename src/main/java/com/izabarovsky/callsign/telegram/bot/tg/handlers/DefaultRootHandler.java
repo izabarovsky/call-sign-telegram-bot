@@ -28,6 +28,7 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
     private final Condition<UpdateWrapper> isRepeaters;
     private final Condition<UpdateWrapper> isRepeatersOfficial;
     private final Condition<UpdateWrapper> isRepeatersNonOfficial;
+    private final Condition<UpdateWrapper> isRepeatersParrots;
     private final Condition<UpdateWrapper> isRepeatersEcholink;
     private final Condition<UpdateWrapper> isCommand;
     private final Condition<UpdateWrapper> isPersonalChat;
@@ -53,6 +54,7 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
     private final Handler<UpdateWrapper, HandlerResult> repeatersGroupAction;
     private final Handler<UpdateWrapper, HandlerResult> repeatersOfficialAction;
     private final Handler<UpdateWrapper, HandlerResult> repeatersNonOfficialAction;
+    private final Handler<UpdateWrapper, HandlerResult> repeatersParrotsAction;
     private final Handler<UpdateWrapper, HandlerResult> repeatersEcholinkAction;
     private final Handler<UpdateWrapper, HandlerResult> nextStateAction;
     private final Handler<UpdateWrapper, HandlerResult> cleanStateAction;
@@ -77,6 +79,7 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
         isRepeaters = cmdCondition(Command.REPEATERS);
         isRepeatersOfficial = cmdCondition(Command.OFFICIAL);
         isRepeatersNonOfficial = cmdCondition(Command.NONOFFICIAL);
+        isRepeatersParrots = cmdCondition(Command.PARROTS);
         isRepeatersEcholink = cmdCondition(Command.ECHOLINK);
         isCommand = new IsCommand();
         isPersonalChat = new IsPersonalChat();
@@ -102,6 +105,7 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
         repeatersGroupAction = new SimpleMessageAction(MessageUtils::msgGroupRepeaters);
         repeatersOfficialAction = new SimpleMessageAction(MessageUtils::msgRepeatersOfficial);
         repeatersNonOfficialAction = new SimpleMessageAction(MessageUtils::msgRepeatersNonOfficial);
+        repeatersParrotsAction = new SimpleMessageAction(MessageUtils::msgRepeatersNonOfficial);
         repeatersEcholinkAction = new SimpleMessageAction(MessageUtils::msgRepeatersEcholink);
         nextStateAction = new NextStateAction(dialogService);
         cleanStateAction = new CleanStateAction(dialogService);
@@ -135,6 +139,7 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
                 .setHandler(isRepeaters, repeatersGroupAction)
                 .setHandler(isRepeatersOfficial, repeatersOfficialAction)
                 .setHandler(isRepeatersNonOfficial, repeatersNonOfficialAction)
+                .setHandler(isRepeatersParrots, repeatersParrotsAction)
                 .setHandler(isRepeatersEcholink, repeatersEcholinkAction);
 
         return BranchHandler.builder()
@@ -204,8 +209,8 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
                 .setHandler(isRepeaters, repeatersPrivateAction)
                 .setHandler(isRepeatersOfficial, repeatersOfficialAction)
                 .setHandler(isRepeatersNonOfficial, repeatersNonOfficialAction)
+                .setHandler(isRepeatersParrots, repeatersParrotsAction)
                 .setHandler(isRepeatersEcholink, repeatersEcholinkAction);
-
 
         return BranchHandler.builder()
                 .condition(isExistsUser)

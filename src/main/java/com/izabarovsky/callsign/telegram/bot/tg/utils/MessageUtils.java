@@ -135,6 +135,10 @@ public class MessageUtils {
         return newMessage(chatId, threadId, textRepeatersOfficial(), null);
     }
 
+    public static HandlerResult msgParrots(Long chatId, Integer threadId) {
+        return newMessage(chatId, threadId, textParrots(), null);
+    }
+
     public static HandlerResult msgRepeatersEcholink(Long chatId, Integer threadId) {
         return newMessage(chatId, threadId, textRepeatersEcholink(), null);
     }
