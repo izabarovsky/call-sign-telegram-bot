@@ -18,6 +18,6 @@ public class K2StatisticsGroupAction implements Handler<UpdateWrapper, HandlerRe
     public HandlerResult handle(UpdateWrapper payload) {
         var chatId = payload.getChatId();
         var threadId = payload.getThreadId();
-        return msgGroupStatistics(chatId, threadId, callSignService.findAll());
+        return msgGroupStatistics(chatId, threadId, callSignService.getStatistics());
     }
 }

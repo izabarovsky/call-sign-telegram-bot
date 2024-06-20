@@ -1,6 +1,7 @@
 package com.izabarovsky.callsign.telegram.bot.tg.utils;
 
 import com.izabarovsky.callsign.telegram.bot.service.CallSignModel;
+import com.izabarovsky.callsign.telegram.bot.service.StatisticsModel;
 import com.izabarovsky.callsign.telegram.bot.tg.HandlerResult;
 import org.apache.commons.io.IOUtils;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
@@ -17,7 +18,6 @@ import java.util.Objects;
 
 import static com.izabarovsky.callsign.telegram.bot.tg.utils.MenuUtils.*;
 import static com.izabarovsky.callsign.telegram.bot.tg.utils.TextUtils.*;
-import static java.util.Objects.nonNull;
 
 public class MessageUtils {
 
@@ -36,20 +36,12 @@ public class MessageUtils {
         return newMessage(chatId, threadId, payload, buildMainMenu());
     }
 
-    public static HandlerResult msgPrivateStatistics(Long chatId, Integer threadId, List<CallSignModel> list) {
-        long total = list.size();
-        long official = list.stream().filter(s -> nonNull(s.getOfficialCallSign())).count();
-        long dmr = list.stream().filter(s -> nonNull(s.getDmrId())).count();
-        long nonOfficial = total - official;
-        return newMessage(chatId, threadId, textStatistics(total, official, nonOfficial, dmr), buildGetAllInlineMenu());
+    public static HandlerResult msgPrivateStatistics(Long chatId, Integer threadId, StatisticsModel statisticsModel) {
+        return newMessage(chatId, threadId, textStatistics(statisticsModel), buildGetAllInlineMenu());
     }
 
-    public static HandlerResult msgGroupStatistics(Long chatId, Integer threadId, List<CallSignModel> list) {
-        long total = list.size();
-        long official = list.stream().filter(s -> nonNull(s.getOfficialCallSign())).count();
-        long dmr = list.stream().filter(s -> nonNull(s.getDmrId())).count();
-        long nonOfficial = total - official;
-        return newMessage(chatId, threadId, textStatistics(total, official, nonOfficial, dmr), null);
+    public static HandlerResult msgGroupStatistics(Long chatId, Integer threadId, StatisticsModel statisticsModel) {
+        return newMessage(chatId, threadId, textStatistics(statisticsModel), null);
     }
 
     public static HandlerResult msgNewcomer(Long chatId, Integer threadId, String userName) {

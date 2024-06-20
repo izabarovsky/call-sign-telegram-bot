@@ -18,6 +18,6 @@ public class K2StatisticsPrivateAction implements Handler<UpdateWrapper, Handler
     public HandlerResult handle(UpdateWrapper payload) {
         var chatId = payload.getChatId();
         var threadId = payload.getThreadId();
-        return msgPrivateStatistics(chatId, threadId, callSignService.findAll());
+        return msgPrivateStatistics(chatId, threadId, callSignService.getStatistics());
     }
 }

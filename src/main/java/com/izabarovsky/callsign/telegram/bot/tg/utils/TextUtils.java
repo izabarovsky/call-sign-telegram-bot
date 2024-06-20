@@ -1,6 +1,7 @@
 package com.izabarovsky.callsign.telegram.bot.tg.utils;
 
 import com.izabarovsky.callsign.telegram.bot.service.CallSignModel;
+import com.izabarovsky.callsign.telegram.bot.service.StatisticsModel;
 import com.izabarovsky.callsign.telegram.bot.tg.Command;
 
 import java.util.Objects;
@@ -76,17 +77,17 @@ public class TextUtils {
                 """, username);
     }
 
-    public static String textStatistics(long total, long official, long nonOfficial, long dmr) {
+    public static String textStatistics(StatisticsModel statisticsModel) {
         return String.format("""
                         <b>Зареєстровано через бот</b>: %s
                         <b>Мають офіційний позивний</b>: %s
                         <b>Не мають офіційного</b>: %s
                         <b>Мають DMR_ID</b>: %s
                         """,
-                total,
-                official,
-                nonOfficial,
-                dmr
+                statisticsModel.getTotal(),
+                statisticsModel.getOfficial(),
+                statisticsModel.getNonOfficial(),
+                statisticsModel.getDmr()
         );
     }
 
