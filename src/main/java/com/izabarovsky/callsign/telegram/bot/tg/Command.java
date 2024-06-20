@@ -14,6 +14,7 @@ public enum Command {
     REPEATERS("/Repeaters"),
     OFFICIAL("/Official"),
     NONOFFICIAL("/NonOfficial"),
+    PARROTS("/Parrots"),
     ECHOLINK("/Echolink");
 
 

@@ -13,6 +13,8 @@ Simple project based on **java17**, **maven**, **spring-boot**
 Data storage is **postgres**  
 Telegram API client is **telegrambots** 
 
+Nice repository, worth a look https://github.com/MonsterDeveloper/java-telegram-bot-tutorial/tree/master
+
 ### Example leave chat
 
 ```
