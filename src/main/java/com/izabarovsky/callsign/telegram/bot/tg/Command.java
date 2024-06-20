@@ -10,8 +10,12 @@ public enum Command {
     EDIT("/Edit"),
     CREATE("/Create"),
     CANCEL("/Cancel"),
-    FREQUENCY_NOTES("/FrequencyNotes"),
-    SKIP("/Skip");
+    SKIP("/Skip"),
+    REPEATERS("/Repeaters"),
+    OFFICIAL("/Official"),
+    NONOFFICIAL("/NonOfficial"),
+    ECHOLINK("/Echolink");
+
 
     private final String value;
 

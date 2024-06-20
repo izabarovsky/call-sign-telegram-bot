@@ -3,15 +3,19 @@ package com.izabarovsky.callsign.telegram.bot.tg.handlers.actions;
 import com.izabarovsky.callsign.telegram.bot.tg.HandlerResult;
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.Handler;
 import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
+import lombok.AllArgsConstructor;
 
-import static com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils.msgFrequencyNotes;
+import java.util.function.BiFunction;
 
-public class FrequencyNotesAction implements Handler<UpdateWrapper, HandlerResult> {
+@AllArgsConstructor
+public class SimpleMessageAction implements Handler<UpdateWrapper, HandlerResult> {
+    private final BiFunction<Long, Integer, HandlerResult> message;
 
     @Override
     public HandlerResult handle(UpdateWrapper payload) {
         var chatId = payload.getChatId();
         var threadId = payload.getThreadId();
-        return msgFrequencyNotes(chatId, threadId);
+        return message.apply(chatId, threadId);
     }
+
 }

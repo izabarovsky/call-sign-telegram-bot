@@ -8,6 +8,7 @@ public interface UpdateWrapper {
     Long getChatId();
 
     Integer getThreadId();
+
     String getText();
 
     String getUsername();

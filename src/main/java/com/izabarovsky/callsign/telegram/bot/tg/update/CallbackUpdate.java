@@ -1,9 +1,11 @@
 package com.izabarovsky.callsign.telegram.bot.tg.update;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+@Slf4j
 @AllArgsConstructor
 public class CallbackUpdate implements UpdateWrapper {
     private final Update update;
@@ -20,7 +22,7 @@ public class CallbackUpdate implements UpdateWrapper {
 
     @Override
     public Integer getThreadId() {
-        throw new NotImplementedException();
+        return null;
     }
 
     @Override

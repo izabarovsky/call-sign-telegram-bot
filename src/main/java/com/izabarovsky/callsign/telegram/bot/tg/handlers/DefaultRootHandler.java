@@ -9,6 +9,7 @@ import com.izabarovsky.callsign.telegram.bot.tg.handlers.actions.*;
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.conditions.*;
 import com.izabarovsky.callsign.telegram.bot.tg.handlers.validator.OfficialCallSignValidator;
 import com.izabarovsky.callsign.telegram.bot.tg.update.UpdateWrapper;
+import com.izabarovsky.callsign.telegram.bot.tg.utils.MessageUtils;
 import com.izabarovsky.callsign.telegram.bot.utils.CsvUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,10 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
     private final Condition<UpdateWrapper> isMyK2Info;
     private final Condition<UpdateWrapper> isK2Info;
     private final Condition<UpdateWrapper> isStatistics;
-    private final Condition<UpdateWrapper> isFrequencyNotes;
+    private final Condition<UpdateWrapper> isRepeaters;
+    private final Condition<UpdateWrapper> isRepeatersOfficial;
+    private final Condition<UpdateWrapper> isRepeatersNonOfficial;
+    private final Condition<UpdateWrapper> isRepeatersEcholink;
     private final Condition<UpdateWrapper> isCommand;
     private final Condition<UpdateWrapper> isPersonalChat;
     private final Condition<UpdateWrapper> isSession;
@@ -45,7 +49,11 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
     private final Handler<UpdateWrapper, HandlerResult> myK2InfoPrivateAction;
     private final Handler<UpdateWrapper, HandlerResult> k2InfoAction;
     private final Handler<UpdateWrapper, HandlerResult> k2StatisticsAction;
-    private final Handler<UpdateWrapper, HandlerResult> frequencyNotesAction;
+    private final Handler<UpdateWrapper, HandlerResult> repeatersPrivateAction;
+    private final Handler<UpdateWrapper, HandlerResult> repeatersGroupAction;
+    private final Handler<UpdateWrapper, HandlerResult> repeatersOfficialAction;
+    private final Handler<UpdateWrapper, HandlerResult> repeatersNonOfficialAction;
+    private final Handler<UpdateWrapper, HandlerResult> repeatersEcholinkAction;
     private final Handler<UpdateWrapper, HandlerResult> nextStateAction;
     private final Handler<UpdateWrapper, HandlerResult> cleanStateAction;
     private final Handler<UpdateWrapper, HandlerResult> saveK2CallSignAction;
@@ -66,7 +74,10 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
         isMyK2Info = cmdCondition(Command.MY_K2_INFO);
         isK2Info = cmdCondition(Command.K2_INFO);
         isStatistics = cmdCondition(Command.STATISTICS);
-        isFrequencyNotes = cmdCondition(Command.FREQUENCY_NOTES);
+        isRepeaters = cmdCondition(Command.REPEATERS);
+        isRepeatersOfficial = cmdCondition(Command.OFFICIAL);
+        isRepeatersNonOfficial = cmdCondition(Command.NONOFFICIAL);
+        isRepeatersEcholink = cmdCondition(Command.ECHOLINK);
         isCommand = new IsCommand();
         isPersonalChat = new IsPersonalChat();
         isSession = new IsSession(dialogService);
@@ -87,7 +98,11 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
         myK2InfoPrivateAction = new MyK2InfoPrivateAction(callSignService);
         k2InfoAction = new K2InfoAction(callSignService);
         k2StatisticsAction = new K2StatisticsAction(callSignService);
-        frequencyNotesAction = new FrequencyNotesAction();
+        repeatersPrivateAction = new SimpleMessageAction(MessageUtils::msgPrivateRepeaters);
+        repeatersGroupAction = new SimpleMessageAction(MessageUtils::msgGroupRepeaters);
+        repeatersOfficialAction = new SimpleMessageAction(MessageUtils::msgRepeatersOfficial);
+        repeatersNonOfficialAction = new SimpleMessageAction(MessageUtils::msgRepeatersNonOfficial);
+        repeatersEcholinkAction = new SimpleMessageAction(MessageUtils::msgRepeatersEcholink);
         nextStateAction = new NextStateAction(dialogService);
         cleanStateAction = new CleanStateAction(dialogService);
         saveK2CallSignAction = new SaveK2CallSignAction(callSignService, dialogService);
@@ -117,7 +132,10 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
                 .setHandler(isMyK2Info, myK2InfoGroupAction)
                 .setHandler(isK2Info, k2InfoAction)
                 .setHandler(isStatistics, k2StatisticsAction)
-                .setHandler(isFrequencyNotes, frequencyNotesAction);
+                .setHandler(isRepeaters, repeatersGroupAction)
+                .setHandler(isRepeatersOfficial, repeatersOfficialAction)
+                .setHandler(isRepeatersNonOfficial, repeatersNonOfficialAction)
+                .setHandler(isRepeatersEcholink, repeatersEcholinkAction);
 
         return BranchHandler.builder()
                 .condition(isPersonalChat)
@@ -183,7 +201,11 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
                 .setHandler(isSearch, startDialogSearchAction)
                 .setHandler(isGetAll, getAllCallSignsAction)
                 .setHandler(isStatistics, k2StatisticsAction)
-                .setHandler(isFrequencyNotes, frequencyNotesAction);
+                .setHandler(isRepeaters, repeatersPrivateAction)
+                .setHandler(isRepeatersOfficial, repeatersOfficialAction)
+                .setHandler(isRepeatersNonOfficial, repeatersNonOfficialAction)
+                .setHandler(isRepeatersEcholink, repeatersEcholinkAction);
+
 
         return BranchHandler.builder()
                 .condition(isExistsUser)

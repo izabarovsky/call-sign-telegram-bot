@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -28,7 +29,7 @@ public class MenuUtils {
         KeyboardRow myK2Row = newRow(Command.MY_K2_INFO);
         KeyboardRow searchRow = newRow(Command.SEARCH);
         KeyboardRow membersRow = newRow(Command.STATISTICS, Command.GET_ALL);
-        KeyboardRow notesRow = newRow(Command.FREQUENCY_NOTES);
+        KeyboardRow notesRow = newRow(Command.REPEATERS);
         keyboardRows.add(myK2Row);
         keyboardRows.add(searchRow);
         keyboardRows.add(membersRow);
@@ -46,6 +47,19 @@ public class MenuUtils {
         rowList.add(keyboardButtonsRow);
         return InlineKeyboardMarkup.builder()
                 .keyboard(rowList)
+                .build();
+    }
+
+    public static InlineKeyboardMarkup buildRepeatersInlineMenu() {
+        InlineKeyboardButton buttonOfficial = newInlineButton(Command.OFFICIAL, "Офіційні");
+        InlineKeyboardButton buttonNonOfficial = newInlineButton(Command.NONOFFICIAL, "Неофіційні");
+        InlineKeyboardButton buttonEcholink = newInlineButton(Command.ECHOLINK, "Ехолінк");
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+        rows.add(Collections.singletonList(buttonOfficial));
+        rows.add(Collections.singletonList(buttonNonOfficial));
+        rows.add(Collections.singletonList(buttonEcholink));
+        return InlineKeyboardMarkup.builder()
+                .keyboard(rows)
                 .build();
     }
 
@@ -75,6 +89,13 @@ public class MenuUtils {
                 .resizeKeyboard(true)
                 .oneTimeKeyboard(false)
                 .build();
+    }
+
+    private static InlineKeyboardButton newInlineButton(Command command, String text) {
+        InlineKeyboardButton button = new InlineKeyboardButton();
+        button.setText(text);
+        button.setCallbackData(command.value());
+        return button;
     }
 
 }
