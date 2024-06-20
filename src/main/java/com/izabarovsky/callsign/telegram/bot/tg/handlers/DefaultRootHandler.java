@@ -105,7 +105,7 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
         repeatersGroupAction = new SimpleMessageAction(MessageUtils::msgGroupRepeaters);
         repeatersOfficialAction = new SimpleMessageAction(MessageUtils::msgRepeatersOfficial);
         repeatersNonOfficialAction = new SimpleMessageAction(MessageUtils::msgRepeatersNonOfficial);
-        repeatersParrotsAction = new SimpleMessageAction(MessageUtils::msgRepeatersNonOfficial);
+        repeatersParrotsAction = new SimpleMessageAction(MessageUtils::msgParrots);
         repeatersEcholinkAction = new SimpleMessageAction(MessageUtils::msgRepeatersEcholink);
         nextStateAction = new NextStateAction(dialogService);
         cleanStateAction = new CleanStateAction(dialogService);
