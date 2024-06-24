@@ -21,9 +21,7 @@ public class CallbackUpdate implements UpdateWrapper {
 
     @Override
     public Integer getThreadId() {
-        Integer threadId = extractThreadId();
-        log.info("Callback from thread {} with data {} ", threadId, update.getCallbackQuery().getData());
-        return threadId;
+        return extractThreadId();
     }
 
     @Override

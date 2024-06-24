@@ -123,6 +123,7 @@ public class MessageUtils {
         return newMessage(chatId, threadId, textRepeatersPrivate(), buildRepeatersInlineMenu(threadId));
     }
 
+    @Deprecated
     public static HandlerResult msgGroupRepeaters(Long chatId, Integer threadId) {
         return newMessage(chatId, threadId, textRepeatersGroup(), buildRepeatersInlineMenu(threadId));
     }

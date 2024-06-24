@@ -104,7 +104,7 @@ public class DefaultRootHandler implements Handler<UpdateWrapper, HandlerResult>
         k2StatisticsGroupAction = new K2StatisticsGroupAction(callSignService);
         k2StatisticsPrivateAction = new K2StatisticsPrivateAction(callSignService);
         repeatersPrivateAction = new SimpleMessageAction(MessageUtils::msgPrivateRepeaters);
-        repeatersGroupAction = new SimpleMessageAction(MessageUtils::msgGroupRepeaters);
+        repeatersGroupAction = new SimpleMessageAction(MessageUtils::msgPrivateRepeaters);
         repeatersOfficialAction = new SimpleMessageAction(MessageUtils::msgRepeatersOfficial);
         repeatersNonOfficialAction = new SimpleMessageAction(MessageUtils::msgRepeatersNonOfficial);
         repeatersParrotsAction = new SimpleMessageAction(MessageUtils::msgParrots);
