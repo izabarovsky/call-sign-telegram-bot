@@ -57,7 +57,7 @@ public class CallbackUpdate implements UpdateWrapper {
     }
 
     private Integer extractThreadId() {
-        String [] array = update.getCallbackQuery().getData().split("\\|");
+        String [] array = update.getCallbackQuery().getData().split(":");
         return array.length>1 ? Integer.parseInt(array[1]) : null;
     }
 }
