@@ -21,7 +21,9 @@ public class CallbackUpdate implements UpdateWrapper {
 
     @Override
     public Integer getThreadId() {
-        return null;
+        Integer threadId = extractThreadId();
+        log.info("Callback from thread {} with data {} ", threadId, update.getCallbackQuery().getData());
+        return threadId;
     }
 
     @Override
@@ -52,5 +54,10 @@ public class CallbackUpdate implements UpdateWrapper {
     @Override
     public Update getUpdate() {
         return update;
+    }
+
+    private Integer extractThreadId() {
+        String [] array = update.getCallbackQuery().getData().split("\\|");
+        return array.length>1 ? Integer.parseInt(array[1]) : null;
     }
 }

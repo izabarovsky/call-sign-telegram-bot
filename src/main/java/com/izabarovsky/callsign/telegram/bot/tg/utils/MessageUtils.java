@@ -120,11 +120,11 @@ public class MessageUtils {
     }
 
     public static HandlerResult msgPrivateRepeaters(Long chatId, Integer threadId) {
-        return newMessage(chatId, threadId, textRepeatersPrivate(), buildRepeatersInlineMenu());
+        return newMessage(chatId, threadId, textRepeatersPrivate(), buildRepeatersInlineMenu(threadId));
     }
 
     public static HandlerResult msgGroupRepeaters(Long chatId, Integer threadId) {
-        return newMessage(chatId, threadId, textRepeatersGroup(), null);
+        return newMessage(chatId, threadId, textRepeatersGroup(), buildRepeatersInlineMenu(threadId));
     }
 
     public static HandlerResult msgRepeatersNonOfficial(Long chatId, Integer threadId) {
