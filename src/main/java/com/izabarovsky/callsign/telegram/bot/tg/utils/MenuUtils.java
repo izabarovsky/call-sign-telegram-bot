@@ -96,7 +96,7 @@ public class MenuUtils {
         InlineKeyboardButton button = new InlineKeyboardButton();
         button.setText(text);
         String data = command.value();
-        if(Objects.nonNull(threadId)) {
+        if (Objects.nonNull(threadId)) {
             data = data + ":" + threadId;
         }
         button.setCallbackData(data);

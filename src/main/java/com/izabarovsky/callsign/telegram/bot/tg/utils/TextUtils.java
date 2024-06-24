@@ -154,15 +154,6 @@ public class TextUtils {
                 Slot - 1
                 ColorCode-1
                 TalkGroup - 25501 (Kyiv)
-                                
-                <b>Brovary Parrot</b>
-                RX/TX 436.700
-                CTSS: 71.9Hz
-                QTH - Бровари
-                                
-                <b>WhiteChurch Parrot</b>
-                RX/TX 145.400
-                QTH - Біла Церква
                 """;
     }
 
