@@ -140,7 +140,7 @@ public class TextUtils {
                 RX 145.675 / TX 145.075 (offset: -0.6)
                 CTCSS: 88.5Hz
                                 
-                <b>R76</b>
+                <b>R76 🔋</b>
                 RX 438.800 / TX 431.200 (offset -7.6)
                 CTCSS: 88.5Hz
                 QTH - Бровари
@@ -159,7 +159,7 @@ public class TextUtils {
                 TG: 25501 (Kyiv)
 
                 <b>R100 (DMR)</b>
-                RX 439.400 / TX 431.800
+                RX 439.400 / TX 431.800 (offset -7.6)
                 TS: 1 CC: 1
                 TG: 25501 (Kyiv)
                 """;
