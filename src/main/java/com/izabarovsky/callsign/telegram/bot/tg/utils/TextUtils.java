@@ -117,7 +117,7 @@ public class TextUtils {
                 <b>Kyiv-1</b>
                 RX 446.225 / TX 434.850 (offset: -11.375)
                 CTCSS: 88.5Hz
-                QTH - ТРЦ Апрель
+                QTH - Святошинський відділ РАЦС
                 Icom IC-F211
                 Босс Система
                                 
