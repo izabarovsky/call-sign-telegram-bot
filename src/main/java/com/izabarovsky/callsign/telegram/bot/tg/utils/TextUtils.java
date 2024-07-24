@@ -97,7 +97,7 @@ public class TextUtils {
 
     public static String textRepeatersGroup() {
         return String.format("""
-                        Репітери Києва
+                        Репітери Києва 🎙️
                         Офіційні -> %s
                         Неофіційні -> %s
                         Папуги -> %s
@@ -111,7 +111,7 @@ public class TextUtils {
 
     public static String textRepeatersNonOfficial() {
         return """
-                Можна без офіційного позивного,
+                🏴‍☠️ Можна без офіційного позивного,
                 дотримуючись етики!
                             
                 <b>Kyiv-1</b>
@@ -169,16 +169,16 @@ public class TextUtils {
     public static String textParrots() {
         return """
                 🦜 🦜 🦜
-                <b> Brovary Parrot</b>
+                <b>Brovary Parrot</b>
                 RX/TX 436.700
                 CTSS: 71.9Hz
                 QTH - Бровари
                                 
-                <b> WhiteChurch Parrot</b>
+                <b>WhiteChurch Parrot</b>
                 RX/TX 145.400
                 QTH - Біла Церква
                                 
-                <b> Parrot R92</b>
+                <b>Parrot R92</b>
                 RX/TX 439.200
                 CTSS: 88.5
                 """;
