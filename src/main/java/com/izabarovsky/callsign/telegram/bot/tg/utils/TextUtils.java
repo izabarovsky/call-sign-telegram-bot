@@ -118,9 +118,11 @@ public class TextUtils {
                 RX 446.225 / TX 434.850 (offset: -11.375)
                 CTCSS: 88.5Hz
                 QTH - ТРЦ Апрель
+                Icom IC-F211
                 Босс Система
                                 
                 <b>Kyiv-2</b>
+                Тимчасово не працює
                 RX 446.150 / TX 434.950 (offset -11.2)
                 CTCSS: 74.4Hz
                 QTH - Батиєва гора
@@ -136,9 +138,11 @@ public class TextUtils {
                 <b>Тільки з офіційним позивним!</b>
                                 
                 <b>R3</b>
-                RX 145.675 / TX1 45.075 (offset: -0.6)
+                RX 145.675 / TX 145.075 (offset: -0.6)
                 CTCSS: 88.5Hz
-                                
+                Має резервне живлення
+                \\xF0\\x9F\\x94\\x8B
+                
                 <b>R76</b>
                 RX 438.800 / TX 431.200 (offset -7.6)
                 CTCSS: 88.5Hz
@@ -148,12 +152,22 @@ public class TextUtils {
                 RX 438.925 / TX 431.325 (offset -7.6)
                 CTCSS: 88.5Hz
                 QTH - Кловський узвіз
+                
+                <b>R85</b>
+                RX 439.025 / TX 431.425 (offset -7.6)
+                Analog
+                CTCSS: 88.5Hz
+                Digital
+                TS: 1
+                CC: 1
+                TG: 25501 (Kyiv)
+                \\xF0\\x9F\\x94\\x8B
 
                 <b>R100 (DMR)</b>
                 RX 439.400 / TX 431.800
-                Slot - 1
-                ColorCode-1
-                TalkGroup - 25501 (Kyiv)
+                TS: 1
+                CC: 1
+                TG: 25501 (Kyiv)
                 """;
     }
 
