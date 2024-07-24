@@ -97,7 +97,7 @@ public class TextUtils {
 
     public static String textRepeatersGroup() {
         return String.format("""
-                        Репітери Києва 🎙️
+                        Репітери Києва 🎙️ 
                         Офіційні -> %s
                         Неофіційні -> %s
                         Папуги -> %s
