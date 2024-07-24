@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,7 +32,7 @@ public class MenuUtils {
     }
 
     public static InlineKeyboardMarkup buildEditInlineMenu() {
-        InlineKeyboardButton inlineKeyboardButton = newInlineButton(Command.EDIT, "Редагувати");
+        InlineKeyboardButton inlineKeyboardButton = newInlineButton(Command.EDIT, "Редагувати", null);
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
         keyboardButtonsRow.add(inlineKeyboardButton);
         return InlineKeyboardMarkup.builder()
@@ -40,7 +41,7 @@ public class MenuUtils {
     }
 
     public static InlineKeyboardMarkup buildGetAllInlineMenu() {
-        InlineKeyboardButton inlineKeyboardButton = newInlineButton(Command.GET_ALL, "Завантажити CSV");
+        InlineKeyboardButton inlineKeyboardButton = newInlineButton(Command.GET_ALL, "Завантажити CSV", null);
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
         keyboardButtonsRow.add(inlineKeyboardButton);
         return InlineKeyboardMarkup.builder()
@@ -48,11 +49,11 @@ public class MenuUtils {
                 .build();
     }
 
-    public static InlineKeyboardMarkup buildRepeatersInlineMenu() {
-        InlineKeyboardButton buttonOfficial = newInlineButton(Command.OFFICIAL, "Офіційні");
-        InlineKeyboardButton buttonNonOfficial = newInlineButton(Command.NONOFFICIAL, "Неофіційні");
-        InlineKeyboardButton buttonParrots = newInlineButton(Command.PARROTS, "Папуги");
-        InlineKeyboardButton buttonEcholink = newInlineButton(Command.ECHOLINK, "Ехолінк");
+    public static InlineKeyboardMarkup buildRepeatersInlineMenu(Integer threadId) {
+        InlineKeyboardButton buttonOfficial = newInlineButton(Command.OFFICIAL, "Офіційні", threadId);
+        InlineKeyboardButton buttonNonOfficial = newInlineButton(Command.NONOFFICIAL, "Неофіційні", threadId);
+        InlineKeyboardButton buttonParrots = newInlineButton(Command.PARROTS, "Папуги", threadId);
+        InlineKeyboardButton buttonEcholink = newInlineButton(Command.ECHOLINK, "Ехолінк", threadId);
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         rows.add(Collections.singletonList(buttonOfficial));
         rows.add(Collections.singletonList(buttonNonOfficial));
@@ -91,10 +92,14 @@ public class MenuUtils {
                 .build();
     }
 
-    private static InlineKeyboardButton newInlineButton(Command command, String text) {
+    private static InlineKeyboardButton newInlineButton(Command command, String text, Integer threadId) {
         InlineKeyboardButton button = new InlineKeyboardButton();
         button.setText(text);
-        button.setCallbackData(command.value());
+        String data = command.value();
+        if (Objects.nonNull(threadId)) {
+            data = data + ":" + threadId;
+        }
+        button.setCallbackData(data);
         return button;
     }
 
