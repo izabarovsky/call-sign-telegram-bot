@@ -111,7 +111,7 @@ public class TextUtils {
 
     public static String textRepeatersNonOfficial() {
         return """
-                🏴‍☠️ Можна без офіційного позивного,
+                🗽 Можна без офіційного позивного,
                 дотримуючись етики!
                             
                 <b>Kyiv-1</b>
@@ -122,12 +122,12 @@ public class TextUtils {
                 Босс Система
                                 
                 <b>Kyiv-2 🔋</b>
-                ⚠️ Тимчасово не працює 🤞
                 RX 446.150 / TX 434.950 (offset -11.2)
                 CTCSS: 74.4Hz
-                QTH - Батиєва гора
+                QTH - Кловський узвіз
                 435.375 - канал для прямих зв'язків
                 Vertex Standard VXR-9000EU 40W
+                Антена - колінеар
                 Босс 131й
                 """;
     }
@@ -157,6 +157,15 @@ public class TextUtils {
                 Digital
                 TS: 1 CC: 1
                 TG: 25501 (Kyiv)
+                
+                <b>R89</b>
+                RX 439.125 / TX 431.525 (offset -7.6)
+                Analog
+                CTCSS: 88.5Hz
+                Digital
+                TS: 1 CC: 1
+                TG: 25501 (Kyiv)
+                QTH - Кловський узвіз
 
                 <b>R100 (DMR)</b>
                 RX 439.400 / TX 431.800 (offset -7.6)
@@ -173,7 +182,7 @@ public class TextUtils {
                 CTSS: 71.9Hz
                 QTH - Бровари
                                 
-                <b>WhiteChurch Parrot</b>
+                <b>WhiteChurch Parrot 👻</b>
                 RX/TX 145.400
                 QTH - Біла Церква
                                 
